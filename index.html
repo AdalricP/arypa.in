@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>arypa.in</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+
+</head>
+
+<body>
+    <h1>Aryan Pahwani</h1>
+    <p>Physics + CS Undergrad. Interested in a broad range of experimental physics & deep ml research.</p>
+    <!-- Tab Navigation -->
+    <nav class="tabs">
+        <button class="tab-btn active" onclick="openTab('projects')">Projects</button>
+        <button class="tab-btn" onclick="openTab('blog')">Blog</button>
+        <button class="tab-btn" onclick="openTab('reading')">Reading</button>
+    </nav>
+
+    <!-- Projects Section -->
+    <div id="projects" class="tab-content active">
+        <h2>Projects</h2>
+        <text>A bunch of interesting projects I've worked on in the past</text>
+
+        <ul>
+            <li><a href="https://cuddles.arypa.in">Cuddles - Video editor, uses FFmpeg.wasm to run on your browser,
+                    couldn't
+                    find a lightweight browser solution to trim video clips so I built my own!</a></li>
+            <li><a href="https://hermes.arypa.in">Project Hermes - I've been trying to meet interesting people and
+                    founders
+                    a whole lot recently; I was having a lot of trouble finding the type of people I was looking for -
+                    so I
+                    built a directory with LLM search to make it easier!</a></li>
+            <li><a href="https://github.com/AdalricP/3D-Rendering-Engine">Tesseris - 3D Rendering engine built using C,
+                    Vulkan and SDL, originally meant for my projective geometry course, but it got a biiit out of hand
+                    :P</a></li>
+            <li>Arduino Replica of the South Korean SGR-A1 Automated Weapons System</li>
+            <li><a href="https://jukebox-capitalists.company.site/">jukebox-capitalists - Custom Speakers with Pan-India
+                    shipping. </a></li>
+            <li><a href="https://github.com/AdalricP/Arxis">Arxis - Voice Assistant based off of LLaMa3.</a></li>
+            <li><a href="https://github.com/AdalricP/AuVisM">AuVisM - A simple audio visualiser for macOS that stays on
+                    your
+                    desktop.</a></li>
+            <li><a href="https://github.com/AdalricP/Verglas">Verglas - A Music Sheet Generator for .musicXML files
+                    based
+                    off of GPT-2 along with the entire Leider Corpus translated .mxl for easier use with machine
+                    learning
+                    models.</a></li>
+            <li><a href="https://github.com/AdalricP/raytracing-project">Simple raytracing engine/scene viewer made in
+                    C++,
+                    SDL</a></li>
+            <li><a href="https://github.com/AdalricP/p2pproximityvoicechat">Peer-2-peer proximity voice chat using
+                    ThreeJS &
+                    WebRTC</a></li>
+        </ul>
+
+        <text>Some quick recent side projects</text>
+        <ul>
+            <li><a href="huffman">Huffman Encoder Visualiser</a></li>
+            <li><a href="https://github.com/AdalricP/overcomplicated-shannon-fano-encoding">shannon fano encoding</a>
+            </li>
+            <li><a href="https://github.com/AdalricP/RLE-algo">Run length Encoding</a></li>
+            <li><a href="https://github.com/AdalricP/shunting-yard">Shunting Yard algo</a></li>
+        </ul>
+    </div>
+
+    <!-- Blog Section -->
+    <div id="blog" class="tab-content">
+        <h2>Blog</h2>
+        <p>I also write a a few blogs</p>
+        <p><a href="https://www.Neuristiq.in">Neuristiq</a> - Deep ML Blog</p>
+        <p><a href="/redshift">RedShift</a> - Very light Physics, math & CS theory blog on interesting topics I found.
+        </p>
+    </div>
+
+    <!-- Reading Section -->
+    <div id="reading" class="tab-content">
+        <!-- Sub-tab Navigation -->
+        <nav class="sub-tabs">
+            <button class="sub-tab-btn active" onclick="openSubTab('recommendations')">Recommendations</button>
+            <button class="sub-tab-btn" onclick="openSubTab('read-list')">Read List</button>
+            <button class="sub-tab-btn" onclick="openSubTab('technical-reads')">Technical Reads</button>
+        </nav>
+
+        <!-- Recommendations Sub-tab -->
+        <div id="recommendations" class="sub-tab-content active">
+            <h2>Reading</h2>
+            <p>I love to read, and I read a crap ton. Here's a list of things that I liked,</p>
+            <ol>
+                <li>The Nvidia Way: Jensen Huang and the Making of a Tech Giant by Tae Kim. - This is by far my
+                    favourite book.
+                </li>
+                <li>How To Be Succesful - Sam Altman</li>
+                <li>How to be More Agentic - Cate Hall - Not a book - but this is my most impactful read till now.</li>
+                <li>Zero To One by Peter Theil</li>
+                <li>The Goal By Elinyahu M. Goldrat</li>
+                <li>The autobiography of Andrew Carnegie</li>
+                <li>The Mind Of Napolean by J. Christopher Herald</li>
+                <li>The PMARCA's Guide To Career Planning</li>
+            </ol>
+
+            <h3>What I'm Currently Reading:</h3>
+            <ul>
+                <li>Mythos: The greek myths retold - Stephen Fry</li>
+                <li>The Art Of Doing Science & Engineering - Richard Hammings</li>
+            </ul>
+        </div>
+
+        <!-- Read List Sub-tab -->
+        <div id="read-list" class="sub-tab-content">
+            <h2>Read List</h2>
+            <p>Check out my full reading list here:</p>
+            <p><a href="#">Link to Excel Sheet (Coming Soon)</a></p>
+        </div>
+
+        <!-- Technical Reads Sub-tab -->
+        <div id="technical-reads" class="sub-tab-content">
+            <h2>Technical Reads</h2>
+            <p>Technical recommendations will be added here.</p>
+        </div>
+    </div>
+
+    <script>
+        function openTab(tabName) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Show the specific tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to the button that opened the tab
+            // We need to find the button that calls this function with this tabName
+            // A simpler way is to pass 'event' or use event delegation, but for simplicity:
+            const activeBtn = Array.from(buttons).find(btn => btn.getAttribute('onclick').includes(tabName));
+            if (activeBtn) activeBtn.classList.add('active');
+        }
+
+        function openSubTab(subTabName) {
+            // Hide all sub-tab contents
+            const contents = document.querySelectorAll('.sub-tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all sub-tab buttons
+            const buttons = document.querySelectorAll('.sub-tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Show the specific sub-tab content
+            document.getElementById(subTabName).classList.add('active');
+
+            // Add active class to the button that opened the sub-tab
+            const activeBtn = Array.from(buttons).find(btn => btn.getAttribute('onclick').includes(subTabName));
+            if (activeBtn) activeBtn.classList.add('active');
+        }
+    </script>
+
+</body>
+
+</html>

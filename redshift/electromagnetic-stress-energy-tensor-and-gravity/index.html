@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gravity & Electromagnetism</title>
+  <link rel="stylesheet" href="../../style.css">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        processEscapes: true
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      /* Default (Night) */
+      --bg-color: #000000;
+      /* Pure Black */
+      --text-color: #dcddde;
+      --accent-color: #ff3333;
+      /* Redshift Red */
+      --link-color: #ff3333;
+      --code-bg: #111111;
+      --quote-border: #ff3333;
+      --font-main: "Space Mono", monospace;
+    }
+
+    /* Read Mode (Warm/Flux-like) */
+    [data-theme="read"] {
+      --bg-color: #1a1816;
+      --text-color: #d6c4a8;
+      /* Warm sepia text */
+      --accent-color: #ff5555;
+      /* Warmer red/orange */
+      --link-color: #ff5555;
+      --code-bg: #2b2724;
+      --quote-border: #ff5555;
+    }
+
+    /* Day Mode (White) */
+    [data-theme="day"] {
+      --bg-color: #ffffff;
+      --text-color: #333333;
+      --accent-color: #cc0000;
+      /* Darker red for contrast */
+      --link-color: #cc0000;
+      --code-bg: #f5f5f5;
+      --quote-border: #cc0000;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: var(--font-main);
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+      font-size: 16px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Typography */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: inherit;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    [data-theme="day"] h1,
+    [data-theme="day"] h2 {
+      color: #000;
+    }
+
+    h1 {
+      border-bottom: 1px solid var(--code-bg);
+      padding-bottom: 0.5rem;
+    }
+
+    p {
+      margin-bottom: 1.5rem;
+    }
+
+    /* Links */
+    a {
+      color: var(--link-color);
+      text-decoration: underline;
+      font-family: "Space Mono", monospace;
+      transition: opacity 0.2s, letter-spacing 0.2s;
+    }
+
+    a:hover {
+      opacity: 0.8;
+      cursor: pointer;
+      letter-spacing: 1px;
+    }
+
+    /* Bold & Italic */
+    strong {
+      color: inherit;
+      font-weight: 900;
+    }
+
+    em {
+      color: var(--accent-color);
+      font-style: italic;
+    }
+
+    /* Bold + Italic */
+    strong em,
+    em strong {
+      color: var(--accent-color);
+      font-weight: 900;
+      font-style: italic;
+    }
+
+    /* Images */
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 2rem auto;
+      border-radius: 4px;
+    }
+
+    /* Code Blocks */
+    pre {
+      background-color: var(--code-bg);
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin-bottom: 1.5rem;
+      border: 1px solid #333;
+    }
+
+    code {
+      font-family: var(--font-main);
+      background-color: rgba(128, 128, 128, 0.1);
+      padding: 0.2em 0.4em;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+
+    pre code {
+      background-color: transparent;
+      padding: 0;
+    }
+
+    /* Blockquotes */
+    blockquote {
+      border-left: 4px solid var(--quote-border);
+      margin: 1.5rem 0;
+      padding-left: 1rem;
+      color: inherit;
+      opacity: 0.8;
+      font-style: italic;
+    }
+
+    /* Lists */
+    ul,
+    ol {
+      padding-left: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Navigation */
+    .nav {
+      margin-bottom: 3rem;
+      font-size: 0.9rem;
+      opacity: 0.7;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav a {
+      color: var(--text-color);
+      text-decoration: none;
+    }
+
+    .nav a:hover {
+      color: var(--accent-color);
+      text-decoration: underline;
+    }
+
+    /* Theme Switcher */
+    .theme-switcher {
+      display: flex;
+      gap: 1rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .theme-btn {
+      opacity: 0.5;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .theme-btn:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    .theme-btn.active {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+
+    /* Hide raw markdown */
+    #markdown-content {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="nav">
+    <a href="../index.html">~/back-to-menu</a>
+    <div class="theme-switcher">
+      <span class="theme-btn active" onclick="setTheme('night')" title="Night Mode">🌙</span>
+      <span class="theme-btn" onclick="setTheme('read')" title="Read Mode (Warm)">📖</span>
+      <span class="theme-btn" onclick="setTheme('day')" title="Day Mode">☀️</span>
+    </div>
+  </div>
+  <div id="content"></div>
+
+  <!-- PASTE YOUR MARKDOWN HERE INSIDE THE SCRIPT TAG -->
+  <script id="markdown-content" type="text/markdown">
+# How Gravity is created through Electromagnetism; Understanding Einstein's stress-energy tensor
+
+>[!warning] This slightly feels sci-fi, however the claims are backed up theoretically, it's just a fun quirk of general relativity that is very interesting to observe. None of this is practically possible just yet, but maybe in the near future though ;)
+
+>[!note] Throughout the blog, as is common I've used Einstein Notation, would recommend reading it up quickly [here](https://en.wikipedia.org/wiki/Einstein_notation) incase you care about the math here - which there is a bit of.
+
+You must've heard of Einstein's *General Relativity*, right? From all those pop-sci physics videos you've been stacking up? There you would've learnt about relativity in an analogy with a mass on a fabric, bending the fabric around it as such - and then you would've expanded that thinking into thinking that *the mass bends space-time around it, a 3-D Fabric being bent in a 4-dimensional way.*
+
+![[../../media/Pasted image 20250908150340.png]] 
+
+Further, if you have ever pursued an undergraduate degree in physics, you must've learnt about general relativity - and the following equation, which describes the curvature of space-time.
+$$R_{\mu \nu}-\frac12 Rg_{\mu \nu}+\Lambda g_{\mu \nu}= \frac{8\pi G}{c^4}T_{\mu \nu}$$
+$$\text{or}$$
+$$R_{\mu \nu}-\frac12 Rg_{\mu \nu}= \frac{8\pi G}{c^4}T_{\mu \nu}-\Lambda g_{\mu \nu}$$
+>[!note] G is Newton's Gravitational Constant that you may have previously learnt about in high-school physics. $\kappa=\frac{8\pi G}{c^4}$ (pronounced 'kah-pah') is known as the Einstein's Gravitational constant. We won't be writing that, doesn't make much of a difference anyways.
+
+For those who are not aware, here, the terms $R_{\mu \nu}-\frac12 Rg_{\mu \nu}$ describe the curvature and shape of spacetime, very complicated and interesting stuff, but let's not go into much detail over there just yet.
+
+# $\Lambda g_{\mu\nu}$ 
+
+ You may also notice a $\Lambda g_{\mu\nu}$ this is also pretty interesting, this defines the *curvature due to empty-space*, here, $g_{\mu\nu}$ defines the **metric tensor**, which can be thought of (for simplicity, and at-least in euclidean space) as a "unit" of spacetime, as it *defines how distance and "time" are measured.* (remember, spacetime is one thing now, time is just another co-ordinate of space!)
+ 
+$$g_{\mu\nu} =
+\begin{array}{c@{\hspace{3pt}}l}
+   & \begin{array}{cccc} t & x & y & z \end{array} \\[3pt]
+ \begin{array}{c} t \\\\ x \\\\ y \\\\ z \end{array} &
+ \left\{
+ \begin{array}{cccc}
+   \color{red} g_{00} & g_{01} & g_{02} & g_{03} \\\\
+   g_{10} & \color{red} g_{11} & g_{12} & g_{13} \\\\
+   g_{20} & g_{21} & \color{red} g_{22} & g_{23} \\\\
+   g_{30} & g_{31} & g_{32} & \color{red} g_{33}
+ \end{array}
+ \right\}
+\end{array}
+$$
+
+Here, the $\color{red} \text{diagonal}$ terms tell us how much 'distance' is gained for each co-ordinate, while the $\text{off-diagonal}$  terms tell us how the co-ordinates 'mix together' and interact, think if you have a *vector* of length $5$, and it's *x-component* is $4$ units and *y-component*  $3$  units. If you keep it's length the same, but move the vector to a new point where it's *x-component* is $3$ units, clearly, the *y-component* would increase to $4$ units. Quite the similar thing over here!
+
+>[!note] $g_{\mu\nu}$ is set according to the space we're in, for what is known as the Minkowski Space, which is a flat & 4D (3 Space + 1 Time dimensions) we get $$g_{\mu\nu}=\begin{Bmatrix}-1 & 0 & 0 & 0\\\\0 & 1 & 0 & 0\\\\ 0 & 0 & 1 & 0 \\\\ 0 & 0 & 0 & 1\end{Bmatrix}$$
+>
+>(Actually, all the signs can be reversed as well, (+, -, -, -) works too), this will be useful later, keep this in mind.
+>
+
+>[!warning] This is in the covariant form, to convert between covariant and contravariant (i.e. $g^{\mu\nu}$ you can use find the matrix inverse because of the relationship $g_{\mu\nu}g^{\mu\nu}=\delta^\mu_\nu$ for the minkowski space though, they are equal as the tensor is it's own inverse.
+
+>[!note] For some vector $v$, the metric tensor helps us convert between covariant/vector ($v_\mu$) and contravariant ($v^\mu$) forms, by $v_\mu = g_{\mu\nu}v^\mu$ and $v^\mu = g^{\mu\nu}v_\mu$
+
+The $\Lambda$ symbol, defines the *cosmological constant*, fancy term, but all that it really says is that *even empty-space has some energy to it.* Actually, the term represents the *energy-density* of empty space, and is related to expansion/contraction of the universe. 
+$$\Lambda > 0 \implies \text{The universe is\color{red} expanding.}$$$$\Lambda < 0 \implies \text{The universe is\color{blue} contracting.}$$
+$$\Lambda = 0 \implies \text{The universe is \color{green}constant.}$$
+If you want to learn more about these concepts, I'd suggest checking out the Libretext Physics pages on these, now, let's get to the juicy part
+
+# The Juicy Bit - The Stress-Energy Tensor.
+Let's look at the last term that's left now.
+$$\frac{8\pi G}{c^4}T_{\mu\nu}$$
+
+Here $T_{\mu\nu}$ represents the *stress-energy tensor*. I'd argue this is one of *the* most important aspects of general relativity, as it *is* what defines how objects with *energy* or *momentum* can distort spacetime. Yes! It isn't mass that bends spacetime, but rather energy and momentum! 
+
+>[!note] You can check how the stress-energy tensor arises in Appendix 1
+
+Let's also write the stress-energy tensor in a $4\times 4$ matrix form, to better understand what it's made up of,
+$$
+T_{\mu \nu} = \begin{Bmatrix}
+\color{green} T_{00} & \color{BrickRed} T_{01} & \color{BrickRed} T_{02} & \color{BrickRed} T_{03} \\\\
+\color{BrickRed} T_{10} & \color{blue}T_{11} & T_{12} & T_{13} \\\\
+\color{BrickRed} T_{20} & T_{21} & \color{blue}T_{22} & T_{23} \\\\
+\color{BrickRed} T_{30} & T_{31} & T_{32} & \color{blue}T_{33}
+\end{Bmatrix}
+$$ 
+Here,
+$\color{green} T_{00}$ defines the $\color{green}\text{relativistic mass}$ multiplying this by $c^2$ gives us the Energy Density (See: $E=mc^2$) 
+
+>[!info]  Actually, $T_{00}$ is just Energy Density expressed in mass units, this will be important in just a bit!
+
+$\color{BrickRed}T_{k0}$ defines the $\color{BrickRed} \text{density}$ of the momentum or amount of k-th component of momentum per unit volume. (How much is present)
+$\color{BrickRed} T_{0k}$ defines the $\color{BrickRed} \text{current of the momentum}$ or the $\color{BrickRed}\text{flux-density of the k-th component of momentum}$ or how much k-th momentum flows per unit area per unit time. (How much is moving)
+
+The other $T_{kl}$ elements represent the flux-density of the k-th component across a surface perpendicular to the k-th axis, for $\color{blue} k\neq l$ this gives us the $\color{blue} \text{shear stress}$, while for $k=k$ it represents $\text{normal stress}$ or $\text{pressure}$.
+
+Which fits into our original equation,
+$$R_{\mu \nu}-\frac12 Rg_{\mu \nu}+\Lambda g_{\mu \nu}= \frac{8\pi G}{c^4}T_{\mu \nu}$$
+This works for rest-mass, but as we just discussed, it's not *just* rest-mass which affects spacetime, but actually the energy and momentum. So calling $T_{00}$ the relativistic mass *may* be a bit confusing, since what we're actually, physically measuring is the **Energy Density**, for the rest of the blog, I'll be calling it the Energy Density. (This does mean that, *technically speaking* an electromagnetic field can also have mass, which is also a very interesting point whose consequences I may touch upon in a later 'appendix' perhaps).
+
+So, we can use our field equation for anything that affects energy and momentum, something like the Electromagnetism perhaps! 
+
+# The Electromagnetic Stress-Energy Tensor
+
+Well, $T_{\mu\nu}$ is the general stress-energy tensor which arises from anything that affects momentum & energy, $T_{\mu\nu}^{EM}$ is the Electromagnetic Stress Energy tensor, which arises due to electromagnetic fields. It is written as
+$$T_{\mu\nu}^{EM}=\frac{1}{\epsilon_0}(F_{\mu\alpha}F_\nu^\alpha-\frac14g_{\mu\nu}F_{\alpha\beta}F^{\alpha\beta})$$
+Cool. Fancy equation. Now what the hell does that mean?
+
+>[!note] Side-note, you can check the derivation for Electromagnetism Stress-Energy tensor from Appendix 2
+
+Well, let's analyse the first term: $$T_{\mu\nu}^{EM}=\frac{1}{\epsilon_0}(\underset{\text{First Term }}{\underbrace{F_{\mu\alpha}F_\nu^\alpha}}-\frac14g_{\mu\nu}F_{\alpha\beta}F^{\alpha\beta})$$
+$F_{\mu\nu}$ represents the *electromagnetic field tensor* in covariant form, which is written as,
+$$F_{\mu\nu}=\begin{Bmatrix}0&-\frac{E_x}{c}&-\frac{E_y}{c}&-\frac{E_z}{c}\\\\\frac{E_x}{c}&0&-B_z&B_y\\\\\frac{E_y}{c}&B_z&0&-B_x\\\\\frac{E_z}{c}&-B_y&B_x&0\end{Bmatrix}$$
+
+>[!note] I would recommend you to learn more about the electromagnetic field tensor from Chapter 12 of Introduction To Electrodynamics by Griffiths
+
+Remember Einstein Notation, from which we know $F_{\mu\alpha}F^{\alpha}_{\nu} = F_{\mu\alpha}g^{\alpha\beta}F_{\beta\nu}$ for clarity, we can expand this as follows, for some $\mu$ and $\nu$,
+$$F_{\mu\alpha}g^{\alpha\beta}F_{\beta\nu}=\sum_{\alpha=0}^3\sum_{\beta=0}^3F_{\mu\alpha}g^{\alpha\beta}F_{\beta\nu}$$
+Now looking at the second term,
+$$\frac14g_{\mu\nu}F_{\alpha\beta}F^{\alpha\beta}=\frac14g_{\mu\nu}\underset{\text{Scalar Term}}{\bigg (\underbrace{\sum_{\alpha=0}^3\sum_{\beta=0}^3 F_{\alpha\beta}F^{\alpha\beta}}\bigg)}$$$$F_{\alpha\beta}F^{\alpha\beta}=F_{\alpha\beta}g^{\alpha\gamma}g^{\beta\zeta}F_{\gamma\zeta}$$
+So, generally we get the equation for our tensor to be,
+$$\bigg |\Bigg \lceil\ \ \  T^{EM}_{\mu\nu}=\frac{1}{\epsilon_0}\bigg( F_{\mu\alpha}g^{\alpha\beta}F_{\beta\nu}-\frac14g_{\mu\nu}F_{\alpha\beta}g^{\alpha\gamma}g^{\beta\zeta}F_{\gamma\zeta}\bigg)\ \ \ \Bigg \rfloor \bigg |$$
+# Minkowski Spacetime
+
+Great! With this we can find the electromagnetic stress-energy *for any spacetime.* However, we must first specify the type of spacetime we're using. For the sake of this blog, I'll just go with Minkowski spacetime,
+this is a flat 4-Dimensional spacetime, with 3 space dimensions and 1 time dimension, for which we get the metric tensor in the form (+, -, -, -) or (-, + + +), let's work with the latter. 
+(this is what it looks like btw)
+![[../../media/Pasted image 20251005185342.png]]
+According to convention we'll write $g_{\mu\nu}=\eta_{\mu\nu}$ for Minkowski Spacetime and as mentioned earlier we know $\eta_{\mu\nu}=\eta^{\mu\nu}$ (read annotation in metric tensor).
+
+This will specify our general space equation for the stress-energy to
+$$T^{EM}_{\mu\nu}=\frac{1}{\epsilon_0}\bigg( F_{\mu\alpha}\eta_{\alpha\beta}F_{\beta\nu}-\frac14\eta_{\mu\nu}F_{\alpha\beta}\eta^{\alpha\gamma}\eta^{\beta\zeta}F_{\gamma\zeta}\bigg)$$
+Cool, let's start evaluating our $T^{EM}_{\mu\nu}$, I'll show the first element as a sample calculation, but the rest is left as an exercise to the reader.
+
+$$T_{00}^{EM} = \frac1{\epsilon_0}\bigg( F_{0\alpha}\eta_{\alpha\beta}F_{\beta0}-\frac14\eta_{00}F_{\alpha\beta}\eta^{\alpha\gamma}\eta^{\beta\zeta}F_{\gamma\zeta}\bigg)$$
+We can write the first term as,
+$$F_{0\alpha}\eta_{\alpha\beta}F_{\beta0}=\sum_i F_{0i}\eta_{ij}F_{j0}$$
+Taking a look again at our Electromagnetic Field Tensor,
+$$F_{\mu\nu}=\begin{Bmatrix}\color{teal}0&\color{blue}-\frac{E_x}{c}&\color{blue}-\frac{E_y}{c}&\color{blue}-\frac{E_z}{c}\\\\\color{green}\frac{E_x}{c}&0&-B_z&B_y\\\\\color{green}\frac{E_y}{c}&B_z&0&-B_x\\\\\color{green}\frac{E_z}{c}&-B_y&B_x&0\end{Bmatrix}$$
+and our Minkowski Metric Tensor,
+$$\eta_{\mu\nu}=\begin{Bmatrix}\color{red}-1 & 0 & 0 & 0\\\\0 & \color{red}1 & 0 & 0\\\\ 0 & 0 &\color{red} 1 & 0 \\\\ 0 & 0 & 0 &\color{red} 1\end{Bmatrix}$$
+We can see that $\color{green}F_{0i}={E_i/c}$ and $\color{blue}F_{j0}=-E_j/c$, so we can write
+$$\color{green}F_{0i}\color{red}\eta_{ij}\color{blue}F_{j0}\color{black}\iff F_{0i}\eta_{ii}F_{i0}=(E_i/c)(-E_i/c)=-\frac{E_i^2}{c^2}$$
+Summing over $i$ we get,
+$$F_{0\alpha}\eta_{\alpha\beta}F_{\beta0}=\sum_i F_{0i}\eta_{ij}F_{j0}=-\frac{|\vec E|^2}{c^2}$$
+Similarly, we can find for the second term, $\eta_{00}=-1$, now,
+$$\frac14 F_{\alpha\beta}\eta^{\alpha\gamma}\eta^{\beta\zeta}F_{\gamma\zeta}\iff\frac14F_{\alpha\beta}F^{\alpha\beta}\iff\frac14\bigg(\sum_{\alpha,\beta}F_{\alpha\beta}F^{\alpha\beta}\bigg)$$
+Alright, so we can divide this sum into three parts, namely, the $\color{red}\text{time-time component}$ $\alpha=\beta=0$ which is just $0$, the time-space components, $\color{blue}\alpha=0, \beta=i$ and $\color{green}\alpha = i,\beta = 0$, so,
+$$\color{blue}\sum_i F_{0i}F^{0i}$$
+$$\color{green}\sum_i F_{i0}F^{i0}$$
+For the space-space components, we get $\alpha=i, \beta=j$
+(Tensor for reference)
+$$F_{\mu\nu}=\begin{Bmatrix}\color{red}0&\color{blue}-\frac{E_x}{c}&\color{blue}-\frac{E_y}{c}&\color{blue}-\frac{E_z}{c}\\\\\color{green}\frac{E_x}{c}&0&-B_z&B_y\\\\\color{green}\frac{E_y}{c}&B_z&0&-B_x\\\\\color{green}\frac{E_z}{c}&-B_y&B_x&0\end{Bmatrix}$$
+Let's look at the time-space components, here because the field tensor is *asymmetric* we get that, $F_{i0}=-F_{0i}$ and $F^{i0}=-F^{0i}$ which gives us,
+$$\sum_i F_{i0}F^{i0}=\sum_i (-F_{0i})(-F^{0i})=\sum_i F_{0i}F^{0i}$$
+Therefore the sum of the two time-space parts will be,
+$$\color{blue}\sum_i F_{0i}F^{0i}\color{black}+\color{green}\sum_i F_{0i}F^{0i}\color{black}=2\sum_i F_{0i}F^{0i}$$
+We can write this as,
+$$2\sum_i F_{0i}F^{0i}=2\sum_i F_{0i}\eta^{00}\eta^{ii}F_{0i}$$
+Again, since we're using the signs (-, +, +, +) here, we get that, $\eta^{00}=-1$, and any other $\eta^{ii}=+1$ (note: $3\geq i\geq 1$ here, we aren't working with the time-time component, where $i=0$) so we get that, $F^{0i}=(-1)(+1)F_{0i}$ which gives us,
+$$-2\sum_i F_{0i}(-1)(+1)F_{0i}=2\sum_i F_{0i}^2$$
+We can see from the tensor the summation of  $\color{blue} F_{0i}$ terms is just $\vec E/c$ so,
+$$2\sum_i F_{0i}^2 = \frac{2|\vec E|^2}{c^2}$$
+Dividing by $1/4$ we get,
+$$\frac{1}{2}\frac{|\vec E|^2}{c^2}$$
+
+Now, we can look at the space-space component, we have,
+$$\sum_{i,j}F_{ij}F^{ij}$$
+$$F_{ij}F^{ij}=F_{ij}\eta^{ii}\eta^{jj}F_{ij}$$
+ where as discussed previously, $\eta^{ii}=+1$ therefore,
+ 
+$$F_{ij}\eta^{ii}\eta^{jj}F_{ij}=F_{ij}F_{ij}$$
+$$F_{ij}\eta^{ii}\eta^{jj}F_{ij}=F_{ij}F_{ij}=F_{ij}$$
+Now, we sum over, $i$, $j$ and divide by $2$ (why divide by two? well, since summing over $i, j$ would count every element twice.), so we get,
+$$\frac12\sum_{i, j}F_{ij}^2$$
+Evaluating,
+$$\frac12 \bigg(0^2+(-B_z/c)^2+(B_y/c)^2+(-B_x/c)^2+(B_z/c)^2+(-B_y/c)^2+(B_x/c)^2\bigg)=\frac12\bigg(2(|B|/c)^2\bigg)=\frac{|B|^2}{c^2}$$
+Therefore we get that,
+$$\frac12\sum_{i, j}F_{ij}^2=\frac{|B|^2}{c^2}\implies F_{ij}^2=2\frac{|B|^2}{c^2}\implies\frac14 F_{ij}^2=\frac12\frac{|B|^2}{c^2}$$
+So, adding all the three parts we get, (also, since we aren't working with SI units right now anyways, I'll just set $c=1$ & $\epsilon=1$ for convenience, I'll bring SI units back in when we need them for proper calculations for the possible applications)
+$$\frac14F_{\alpha\beta}F^{\alpha\beta}=\frac12\bigg(|B|^2-|E|^2\bigg)$$
+Now going all the way back to our stress-energy tensor equation, we have the equation
+$$T_{00}^{EM} = \bigg( |\vec E|^2 + \frac12 (|\vec B|^2 - |\vec E|^2)\bigg)=\frac12\bigg(|\vec E|^2+|\vec B|^2\bigg)$$
+This is known as the *energy density.*
+
+Therefore, we get our stress-energy tensor as,
+$$T_{\mu\nu}^{EM}=\begin{Bmatrix}\frac12\bigg(|\vec E|^2+|\vec B|^2\bigg)&?&?&?\\\\?&?&?&?\\\\?&?&?&?\\\\?&?&?&?\end{Bmatrix}$$
+For the sake of keeping this blog short, I'll let you work-out the rest of the variables (trust me, it won't take *that* long), for now, just take this as a blackbox truth that the Electromagnetic Stress Energy tensor(SI units) in the Minkowski spacetime looks like this,
+$$T^{EM}_{\mu\nu} =
+\begin{pmatrix}
+\frac{1}{2}\left( \epsilon_0 E^2 + \frac{1}{\mu_0} B^2 \right) &
+\frac{1}{\mu_0 c}(E \times B)_x &
+\frac{1}{\mu_0 c}(E \times B)_y &
+\frac{1}{\mu_0 c}(E \times B)_z \\\\[2ex]
+\frac{1}{\mu_0 c}(E \times B)_x &
+-\sigma_{xx} &
+-\sigma_{xy} &
+-\sigma_{xz} \\\\[2ex]
+\frac{1}{\mu_0 c}(E \times B)_y &
+-\sigma_{yx} &
+-\sigma_{yy} &
+-\sigma_{yz} \\\\[2ex]
+\frac{1}{\mu_0 c}(E \times B)_z &
+-\sigma_{zx} &
+-\sigma_{zy} &
+-\sigma_{zz}
+\end{pmatrix}
+$$
+Here, $\frac{1}{\mu_0 c}(E \times B)_i$ are the *poynting vectors*  and $\sigma_{ij}$ is the maxwell stress tensor, and is defined as,
+$$\sigma_{ij}=\epsilon_0 E_i E_j +\frac{1}{\mu_0}B_iB_j-\frac12\bigg(\epsilon_0E^2+\frac1\mu_0B^2\bigg)\delta_{ij}$$
+This electromagnetic stress-energy tensor is what determines how electromagnetic fields affect the geometry of spacetime. **This means a sufficiently strong electromagnetic field is capable of producing gravity.** 
+## Cool Consequences & Applications
+
+I wanted to prioritise the core theory in this blog, but of course, the interesting part obviously lies in the consequences and applications, now, in-reality the gravitational effect of electromagnetic fields is *extremely weak* and not really useful for any major applications just yet (but if you do have any cool ideas, please send me a mail :)), but this doesn't mean we can't explore some interesting theoretical applications of course.
+
+The first and most interesting case that would probably pop up in your mind, is that *light has electromagnetic fields, does that mean light has a gravitational effect too?* And the answer is ***Yes**!*
+
+Now, Photons aren't fermions, so they aren't subject to the Pauli Exclusion Principle. They are bosons, they can stack together. Which means we can sort of, play around, and create a blackhole with a bunch of high-energy photons. This is known as the ***kugelblitz*.**
+
+![[../../media/A Matrioshka brain is an example of a Class B stellar engine, employing the entire energy output of a star to drive computer systems_.jpeg]]
+
+Another cool application are *spinning superconductors and gravitomagnetic fields*, gravitomagnetic fields are, as the name suggests, the magnetic equivalent of gravity or .
+`magnetic field : electric field :: gravitomagnetic field : gravitational field`, 
+in the common fabric relativity analogy this is like the mass spinning and twisting the fabric.
+
+
+![[../../media/Pasted image 20251007131620.png]]
+
+Interestingly, since superconductors would have an electromagnetic field, when they're spun around quite fast, they may produce a large gravitomagnetic effect. I couldn't find many experimental studies, except one controversial one that claimed to have seen effects of up to $10^{-7}$ times Earths Gravity, which is MASSIVE, though, this study has had trouble being replicated, and the actual gravitomagnetic effect is seen to be much smaller, and has only truly been observed at planetary scales or more by satellites such as in the [Gravity Probe B](https://en.wikipedia.org/wiki/Gravity_Probe_B) experiment.
+
+There are quite a few interesting use-cases of EM gravity, though it *seems* largely unviable for near-term applications since it is so weak. That doesn't mean we can't explore some cool, albeit theoretical, concepts, or try to think of possible applications - since that's always fun to do. :)
+
+That's kind of it for the blog, I've put a few more derivations in the appendix you may wanna check out (I'll put that in maybe a day or two after this blog is up though.)
+
+See ya! 
+
+---
+
+~[/back](https://aryanpahwani.tech/redshift/)
+    </script>
+
+  <script>
+    const markdown = document.getElementById('markdown-content').textContent;
+
+    // Protect LaTeX from marked.js
+    // We replace $$...$$ and $...$ with placeholders
+    const mathExpressions = [];
+    let protectedMarkdown = markdown.replace(/\$\$([\s\S]*?)\$\$|\$((?:\\.|[^$])*)\$/g, (match) => {
+      mathExpressions.push(match);
+      return `MATH_EXPRESSION_${mathExpressions.length - 1}`;
+    });
+
+    // Handle Obsidian-style image links ![[path]] -> ![filename](../media/filename)
+    protectedMarkdown = protectedMarkdown.replace(/!\[\[(.*?)\]\]/g, (match, path) => {
+      const filename = path.split('/').pop();
+      return `![${filename}](../media/${filename})`;
+    });
+
+    // Parse Markdown
+    const html = marked.parse(protectedMarkdown);
+
+    // Restore LaTeX
+    const finalHtml = html.replace(/MATH_EXPRESSION_(\d+)/g, (match, index) => {
+      return mathExpressions[index];
+    });
+
+    document.getElementById('content').innerHTML = finalHtml;
+
+    if (window.MathJax && MathJax.typesetPromise) {
+      MathJax.typesetPromise();
+    }
+
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+
+      // Update active button
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('onclick').includes(theme)) {
+          btn.classList.add('active');
+        }
+      });
+
+      // Save preference
+      localStorage.setItem('redshift-theme', theme);
+    }
+
+    // Load preference
+    const savedTheme = localStorage.getItem('redshift-theme') || 'night';
+    setTheme(savedTheme);
+  </script>
+</body>
+
+</html>

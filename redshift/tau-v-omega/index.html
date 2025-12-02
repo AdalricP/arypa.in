@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tau V Omega</title>
+  <link rel="stylesheet" href="../../style.css">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        processEscapes: true
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      /* Default (Night) */
+      --bg-color: #000000;
+      /* Pure Black */
+      --text-color: #dcddde;
+      --accent-color: #ff3333;
+      /* Redshift Red */
+      --link-color: #ff3333;
+      --code-bg: #111111;
+      --quote-border: #ff3333;
+      --font-main: "Space Mono", monospace;
+    }
+
+    /* Read Mode (Warm/Flux-like) */
+    [data-theme="read"] {
+      --bg-color: #1a1816;
+      --text-color: #d6c4a8;
+      /* Warm sepia text */
+      --accent-color: #ff5555;
+      /* Warmer red/orange */
+      --link-color: #ff5555;
+      --code-bg: #2b2724;
+      --quote-border: #ff5555;
+    }
+
+    /* Day Mode (White) */
+    [data-theme="day"] {
+      --bg-color: #ffffff;
+      --text-color: #333333;
+      --accent-color: #cc0000;
+      /* Darker red for contrast */
+      --link-color: #cc0000;
+      --code-bg: #f5f5f5;
+      --quote-border: #cc0000;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: var(--font-main);
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+      font-size: 16px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Typography */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: inherit;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    [data-theme="day"] h1,
+    [data-theme="day"] h2 {
+      color: #000;
+    }
+
+    h1 {
+      border-bottom: 1px solid var(--code-bg);
+      padding-bottom: 0.5rem;
+    }
+
+    p {
+      margin-bottom: 1.5rem;
+    }
+
+    /* Links */
+    a {
+      color: var(--link-color);
+      text-decoration: underline;
+      font-family: "Space Mono", monospace;
+      transition: opacity 0.2s, letter-spacing 0.2s;
+    }
+
+    a:hover {
+      opacity: 0.8;
+      cursor: pointer;
+      letter-spacing: 1px;
+    }
+
+    /* Bold & Italic */
+    strong {
+      color: inherit;
+      font-weight: 900;
+    }
+
+    em {
+      color: var(--accent-color);
+      font-style: italic;
+    }
+
+    /* Bold + Italic */
+    strong em,
+    em strong {
+      color: var(--accent-color);
+      font-weight: 900;
+      font-style: italic;
+    }
+
+    /* Images */
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 2rem auto;
+      border-radius: 4px;
+    }
+
+    /* Code Blocks */
+    pre {
+      background-color: var(--code-bg);
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin-bottom: 1.5rem;
+      border: 1px solid #333;
+    }
+
+    code {
+      font-family: var(--font-main);
+      background-color: rgba(128, 128, 128, 0.1);
+      padding: 0.2em 0.4em;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+
+    pre code {
+      background-color: transparent;
+      padding: 0;
+    }
+
+    /* Blockquotes */
+    blockquote {
+      border-left: 4px solid var(--quote-border);
+      margin: 1.5rem 0;
+      padding-left: 1rem;
+      color: inherit;
+      opacity: 0.8;
+      font-style: italic;
+    }
+
+    /* Lists */
+    ul,
+    ol {
+      padding-left: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Navigation */
+    .nav {
+      margin-bottom: 3rem;
+      font-size: 0.9rem;
+      opacity: 0.7;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav a {
+      color: var(--text-color);
+      text-decoration: none;
+    }
+
+    .nav a:hover {
+      color: var(--accent-color);
+      text-decoration: underline;
+    }
+
+    /* Theme Switcher */
+    .theme-switcher {
+      display: flex;
+      gap: 1rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .theme-btn {
+      opacity: 0.5;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .theme-btn:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    .theme-btn.active {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+
+    /* Hide raw markdown */
+    #markdown-content {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="nav">
+    <a href="../index.html">~/back-to-menu</a>
+    <div class="theme-switcher">
+      <span class="theme-btn active" onclick="setTheme('night')" title="Night Mode">🌙</span>
+      <span class="theme-btn" onclick="setTheme('read')" title="Read Mode (Warm)">📖</span>
+      <span class="theme-btn" onclick="setTheme('day')" title="Day Mode">☀️</span>
+    </div>
+  </div>
+  <div id="content"></div>
+
+  <!-- PASTE YOUR MARKDOWN HERE INSIDE THE SCRIPT TAG -->
+  <script id="markdown-content" type="text/markdown">
+# Tau V Omega
+
+I recently read this [very interesting post on hackernews](https://news.ycombinator.com/item?id=8230092) and it gave me the itch at 3:20 AM to write a blog; it talked about how physicists [Julian Schwinger](https://en.wikipedia.org/wiki/Julian_Schwinger) and Albert Einstein were relatively "slow" in the way that they thought - especially when compared to [Richard Feynman](https://en.wikipedia.org/wiki/Richard_Feynman) widely known for his 'quick thinking' abillity. By no means are any of those physicists dumb! Of-course not! All three of them are nobel-laureates, infact.
+
+What the post talks about is how Einstein/Schwinger, had the ability to really *think* through a lot of problems with a whole lot of depth - pushing through the mud. While Feynman would be much quicker on his feet, being able to traverse through the road a whole lot quicker.
+
+In physics, there is a very good analogy for this, [Torque](https://phys.libretexts.org/Bookshelves/University_Physics/University_Physics_(OpenStax)/Book%3A_University_Physics_I_-_Mechanics_Sound_Oscillations_and_Waves_(OpenStax)/10%3A_Fixed-Axis_Rotation__Introduction/10.07%3A_Torque), denoted by a $\tau$ (tau) symbol, the ability/force with which an object rotates and [angular frequency/velocity](https://phys.libretexts.org/Courses/Prince_Georges_Community_College/General_Physics_I%3A_Classical_Mechanics/42%3A__Simple_Harmonic_Motion/42.03%3A_Frequency_and_Period) $\omega$ (omega) which describes the speed with which the object rotates.
+
+Our educational systems, and even infact the way we conduct interviews, or exams, or basically any measure of ability - seems to focus a whole lot more on $\omega$ rather than $\tau$. Which is fair, for most jobs it is just much better to have a person who can immediately come up with an answer to the relatively simple questions that they will be facing. However, this changes a lot when we're looking at higher-impact roles. Especially those in research, or leading extremely major projects (such as building out a manufacturing plant) - in these scenarios, being quick on your feet is still quite useful - yes! However, what is much more needed is the ability to think through the mud. I.e. We need people with more $\tau$.
+
+One example I'd wanna bring to light here, is that of [Oppenheimer](https://en.wikipedia.org/wiki/J._Robert_Oppenheimer) - Oppenheimer has of course, had quite a bit of contribution to physics - however, he never won the nobel prize! A primary cause for this is usually cited as his inability to stick to hard problems for extremely long drations, grinding out through the mud, being more inclined to solve interesting things that kept coming up (he kept getting [nerd-sniped](https://xkcd.com/356/) by side-projects essentially). His brain just didn't have the required $\tau$! Yet, his high $\omega$ was very useful with handling the constant distractions and range of problems that came up during the [manhattan project.](https://en.wikipedia.org/wiki/Manhattan_Project)
+
+[Neils Bohr](https://en.wikipedia.org/wiki/Niels_Bohr) who is also credited with a large labour of work in atomic theory and quantum mechanics is also often described as a more $\tau$ person than a $\omega$ person. He often took time to fully grasp ideas - however when he did, he'd often get a deeper and much more profound understanding of the underlying concept than many others. This slow-deliberate thinking was often seen during lectures where he would not be able to grasp the idea from it's neck right from the get-go, often disappointing (but later amazing) others in the field, due to Neils's stature. Of-course, if Neils's mind was truly slow, he would not have been able to contribute, to the amount he did, to the field of theoretical physics.
+
+These examples clearly show that $\tau$-minds and $\omega$-minds aren't necessarily better than the other - but rather more suited for different problems. Another thing the thread does bring to highlight if you read a bit is that - it's not really necessary that a person is naturally born with a $\tau$-mind or a $\omega$-mind - but rather it could very well be that these are a circumstance of their environments - and one can train their brain (possibly very easily) into thinking in one way or the other. How would one do this is not something I've yet thought of - though it's something I'd be quite interested in figuring out.
+
+I've been thinking about this a lot, because whenever I get into technical questions, I'm often not able to grasp exactly what is being talked about in the moment, but when I sit down on my own later, and think through about the topics, I often come up with very interesting insights. Leading me to believe I'm currently more inclined to be a $\tau$-minded person.
+
+I think if someone wants to bring really great impact to the world, which is something I believe everyone should aspire to do, it's important to really master both the things, really being able to cover insanely hard topics, with insane depth, insanely fast. I think well-known/popular modern day examples of this $\tau\omega$-mind may be [Elon Musk](https://en.wikipedia.org/wiki/Elon_Musk) who is known for being deep into the engineering rabbit holes of his various highly technical companies and [Terrence Tao](https://en.wikipedia.org/wiki/Terence_Tao) who is of course, one of the best mathematicians in the world.
+    </script>
+
+  <script>
+    const markdown = document.getElementById('markdown-content').textContent;
+
+    // Protect LaTeX from marked.js
+    // We replace $$...$$ and $...$ with placeholders
+    const mathExpressions = [];
+    let protectedMarkdown = markdown.replace(/\$\$([\s\S]*?)\$\$|\$((?:\\.|[^$])*)\$/g, (match) => {
+      mathExpressions.push(match);
+      return `MATH_EXPRESSION_${mathExpressions.length - 1}`;
+    });
+
+    // Handle Obsidian-style image links ![[path]] -> ![filename](../media/filename)
+    protectedMarkdown = protectedMarkdown.replace(/!\[\[(.*?)\]\]/g, (match, path) => {
+      const filename = path.split('/').pop();
+      return `![${filename}](../media/${filename})`;
+    });
+
+    // Parse Markdown
+    const html = marked.parse(protectedMarkdown);
+
+    // Restore LaTeX
+    const finalHtml = html.replace(/MATH_EXPRESSION_(\d+)/g, (match, index) => {
+      return mathExpressions[index];
+    });
+
+    document.getElementById('content').innerHTML = finalHtml;
+
+    if (window.MathJax && MathJax.typesetPromise) {
+      MathJax.typesetPromise();
+    }
+
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+
+      // Update active button
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('onclick').includes(theme)) {
+          btn.classList.add('active');
+        }
+      });
+
+      // Save preference
+      localStorage.setItem('redshift-theme', theme);
+    }
+
+    // Load preference
+    const savedTheme = localStorage.getItem('redshift-theme') || 'night';
+    setTheme(savedTheme);
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redshift</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #000000;
+            --text-color: #dcddde;
+            --accent-color: #ff3333;
+            --link-color: #ff3333;
+            --font-main: "Space Mono", monospace;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        a {
+            color: var(--link-color);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .header {
+            margin-bottom: 4rem;
+            text-align: center;
+        }
+
+        .ascii-art {
+            color: var(--accent-color);
+            font-size: 0.8rem;
+            line-height: 1.2;
+            white-space: pre;
+            margin-bottom: 2rem;
+            display: inline-block;
+            text-align: left;
+        }
+
+        .post-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .post-item {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #222;
+            padding-bottom: 1.5rem;
+        }
+
+        .post-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            opacity: 0.6;
+        }
+
+        .nav {
+            margin-top: 4rem;
+            border-top: 1px solid #222;
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="ascii-art">
+            <span>██████╗░███████╗██████╗░</span><span
+                style="color: var(--text-color)">███████╗██╗░░██╗██╗███████╗████████╗</span>
+            <span>██╔══██╗██╔════╝██╔══██╗</span><span
+                style="color: var(--text-color)">██╔════╝██║░░██║██║██╔════╝╚══██╔══╝</span>
+            <span>██████╔╝█████╗░░██║░░██║</span><span
+                style="color: var(--text-color)">███████╗███████║██║█████╗░░░░░██║░░░</span>
+            <span>██╔══██╗██╔══╝░░██║░░██║</span><span
+                style="color: var(--text-color)">╚════██║██╔══██║██║██╔══╝░░░░░██║░░░</span>
+            <span>██║░░██║███████╗██████╔╝</span><span
+                style="color: var(--text-color)">███████║██║░░██║██║██║░░░░░░░░██║░░░</span>
+            <span>╚═╝░░╚═╝╚══════╝╚═════╝░</span><span
+                style="color: var(--text-color)">╚══════╝╚═╝░░╚═╝╚═╝╚═╝░░░░░░░░╚═╝░░░</span>
+        </div>
+    </div>
+
+    <ul class="post-list">
+        <li class="post-item">
+            <a href="tau-v-omega/" class="post-title">~/tau-v-omega</a>
+        </li>
+        <li class="post-item">
+            <a href="electromagnetic-stress-energy-tensor-and-gravity/"
+                class="post-title">~/electromagnetic-stress-energy-tensor-and-gravity</a>
+        </li>
+        <li class="post-item">
+            <a href="textbooks-and-tales/" class="post-title">~/textbooks-and-tales</a>
+        </li>
+        <li class="post-item">
+            <a href="the-black-box/" class="post-title">~/the-black-box</a>
+        </li>
+        <li class="post-item">
+            <a href="not-much-to-learn/" class="post-title">~/not-much-to-learn</a>
+        </li>
+        <li class="post-item">
+            <a href="environment-change-vector/" class="post-title">~/environment-change-vector</a>
+        </li>
+        <li class="post-item">
+            <a href="read-difficult-texts-fast/" class="post-title">~/read-difficult-texts-fast</a>
+        </li>
+    </ul>
+
+    <div class="nav">
+        <a href="about.html">~/about</a>
+        <a href="https://arypa.in">~/back-to-main</a>
+    </div>
+</body>
+
+</html>

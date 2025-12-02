@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Huffman Coding Visualiser</title>
+</head>
+<body>
+    <label for="text">Text:</label>
+    <textarea id="text" rows="3" cols="25"></textarea>
+    <button onclick="encodeText()">Encode</button>
+    <div id="output"></div>
+    <style>
+        #text {
+            width: 200px;
+            height: 60px;
+            resize: none;
+            font-size: 1em;
+        }
+        #output {
+            margin-top: 1em;
+            font-family: monospace;
+        }
+    </style>
+    <script>
+        // Huffman Node
+        class Node {
+            constructor(char, freq, left = null, right = null) {
+                this.char = char;
+                this.freq = freq;
+                this.left = left;
+                this.right = right;
+            }
+        }
+
+        // Build frequency map
+        function buildFrequencyMap(text) {
+            const freq = {};
+            for (const char of text) {
+                freq[char] = (freq[char] || 0) + 1;
+            }
+            return freq;
+        }
+
+        // Build Huffman Tree
+        function buildHuffmanTree(freqMap) {
+            const nodes = Object.entries(freqMap).map(([char, freq]) => new Node(char, freq));
+            while (nodes.length > 1) {
+                nodes.sort((a, b) => a.freq - b.freq);
+                const left = nodes.shift();
+                const right = nodes.shift();
+                nodes.push(new Node(null, left.freq + right.freq, left, right));
+            }
+            return nodes[0];
+        }
+
+        // Build codes from tree
+        function buildCodes(node, prefix = '', codes = {}) {
+            if (!node.left && !node.right) {
+                codes[node.char] = prefix;
+            } else {
+                if (node.left) buildCodes(node.left, prefix + '0', codes);
+                if (node.right) buildCodes(node.right, prefix + '1', codes);
+            }
+            return codes;
+        }
+
+        // Encode text
+        function encodeText() {
+            const text = document.getElementById('text').value;
+            if (!text) {
+                document.getElementById('output').textContent = 'Please enter some text.';
+                return;
+            }
+            const freqMap = buildFrequencyMap(text);
+            const tree = buildHuffmanTree(freqMap);
+            const codes = buildCodes(tree);
+            const encoded = text.split('').map(char => codes[char]).join('');
+            document.getElementById('output').innerHTML =
+                `<b>Encoded:</b> ${encoded}<br><b>Codes:</b> ${JSON.stringify(codes)}`;
+        }
+    </script>
+</body>
+</html>

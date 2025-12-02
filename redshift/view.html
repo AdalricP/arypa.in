@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redshift Post</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body {
+            background-color: rgb(0, 0, 0);
+            color: white;
+            font-family: "Space Mono", monospace;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        pre {
+            background: #1a1a1a;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+
+        code {
+            font-family: "Space Mono", monospace;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        .nav {
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="nav">
+        <a href="index.html">~/back-to-menu</a>
+    </div>
+    <div id="content">Loading...</div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const post = params.get('post');
+        const contentDiv = document.getElementById('content');
+
+        if (post) {
+            fetch(`posts/${post}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Post not found');
+                    return response.text();
+                })
+                .then(markdown => {
+                    contentDiv.innerHTML = marked.parse(markdown);
+                })
+                .catch(error => {
+                    contentDiv.innerHTML = `<p>Error loading post: ${error.message}</p>`;
+                });
+        } else {
+            contentDiv.innerHTML = '<p>No post specified.</p>';
+        }
+    </script>
+</body>
+
+</html>
