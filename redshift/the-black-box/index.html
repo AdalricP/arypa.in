@@ -308,7 +308,8 @@ But you only have limited time! - So, to understand things faster, we can black-
     // Handle Obsidian-style image links ![[path]] -> ![filename](../media/filename)
     protectedMarkdown = protectedMarkdown.replace(/!\[\[(.*?)\]\]/g, (match, path) => {
       const filename = path.split('/').pop();
-      return `![${filename}](../media/${filename})`;
+      const encodedFilename = encodeURIComponent(filename);
+      return `![${filename}](../media/${encodedFilename})`;
     });
 
     // Parse Markdown

@@ -294,9 +294,11 @@ Needed this for making [[Statistical Mechanics Notes, Landau-Lifshitz]]
             return `MATH_EXPRESSION_${mathExpressions.length - 1}`;
         });
 
-        // Handle Obsidian-style image links ![[path]] -> ![path](path)
+        // Handle Obsidian-style image links ![[path]] -> ![filename](../media/filename)
         protectedMarkdown = protectedMarkdown.replace(/!\[\[(.*?)\]\]/g, (match, path) => {
-            return `![${path}](${path})`;
+            const filename = path.split('/').pop();
+            const encodedFilename = encodeURIComponent(filename);
+            return `![${filename}](../media/${encodedFilename})`;
         });
 
         // Parse Markdown

@@ -306,7 +306,8 @@ Of course, researching *every-single thing* may be time-consuming, and even if s
     // Handle Obsidian-style image links ![[path]] -> ![filename](../media/filename)
     protectedMarkdown = protectedMarkdown.replace(/!\[\[(.*?)\]\]/g, (match, path) => {
       const filename = path.split('/').pop();
-      return `![${filename}](../media/${filename})`;
+      const encodedFilename = encodeURIComponent(filename);
+      return `![${filename}](../media/${encodedFilename})`;
     });
 
     // Parse Markdown
