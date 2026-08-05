@@ -95,6 +95,12 @@ body>p:first-of-type {
     margin-bottom: 2rem;
 }
 
+.affiliations {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+}
+
 /* Adjusting the "text" tag usage to be block level or replacing it in HTML would be better, 
    but for now we style it to look like a sub-header or description */
 text {

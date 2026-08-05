@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zero To Proximity-Policy Optimisers</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            /* Default (Night) */
+            --bg-color: #000000;
+            /* Pure Black */
+            --text-color: #dcddde;
+            --accent-color: #ff3333;
+            /* Redshift Red */
+            --link-color: #ff3333;
+            --code-bg: #111111;
+            /* Slightly lighter than black */
+            --quote-border: #ff3333;
+            --font-main: "Space Mono", monospace;
+        }
+
+        /* Read Mode (Warm/Flux-like) */
+        [data-theme="read"] {
+            --bg-color: #1a1816;
+            --text-color: #d6c4a8;
+            /* Warm sepia text */
+            --accent-color: #ff5555;
+            /* Warmer red/orange */
+            --link-color: #ff5555;
+            --code-bg: #2b2724;
+            --quote-border: #ff5555;
+        }
+
+        /* Day Mode (White) */
+        [data-theme="day"] {
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --accent-color: #cc0000;
+            /* Darker red for contrast */
+            --link-color: #cc0000;
+            --code-bg: #f5f5f5;
+            --quote-border: #cc0000;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+            font-size: 16px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Typography */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: inherit;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        [data-theme="day"] h1,
+        [data-theme="day"] h2 {
+            color: #000;
+        }
+
+        h1 {
+            border-bottom: 1px solid var(--code-bg);
+            padding-bottom: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Links */
+        a {
+            color: var(--link-color);
+            text-decoration: underline;
+            font-family: "Space Mono", monospace;
+            transition: opacity 0.2s, letter-spacing 0.2s;
+        }
+
+        a:hover {
+            opacity: 0.8;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+
+        /* Bold & Italic */
+        strong {
+            color: inherit;
+            font-weight: 900;
+        }
+
+        em {
+            color: var(--accent-color);
+            font-style: italic;
+        }
+
+        /* Bold + Italic */
+        strong em,
+        em strong {
+            color: var(--accent-color);
+            font-weight: 900;
+            font-style: italic;
+        }
+
+        /* Images */
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 2rem auto;
+            border-radius: 4px;
+        }
+
+        /* Code Blocks */
+        pre {
+            background-color: var(--code-bg);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            border: 1px solid #333;
+        }
+
+        code {
+            font-family: var(--font-main);
+            background-color: rgba(128, 128, 128, 0.1);
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        /* Blockquotes */
+        blockquote {
+            border-left: 4px solid var(--quote-border);
+            margin: 1.5rem 0;
+            padding-left: 1rem;
+            color: inherit;
+            opacity: 0.8;
+            font-style: italic;
+        }
+
+        /* Lists */
+        ul,
+        ol {
+            padding-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Navigation */
+        .nav {
+            margin-bottom: 3rem;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav a {
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .nav a:hover {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+
+        /* Theme Switcher */
+        .theme-switcher {
+            display: flex;
+            gap: 1rem;
+            font-size: 1.2rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .theme-btn {
+            opacity: 0.5;
+            transition: opacity 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .theme-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .theme-btn.active {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        /* Hide raw markdown */
+        #markdown-content {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="nav">
+        <a href="../index.html">~/back-to-menu</a>
+        <div class="theme-switcher">
+            <span class="theme-btn active" onclick="setTheme('night')" title="Night Mode">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </span>
+            <span class="theme-btn" onclick="setTheme('read')" title="Read Mode (Warm)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+            </span>
+            <span class="theme-btn" onclick="setTheme('day')" title="Day Mode">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </span>
+        </div>
+    </div>
+    <div id="content"></div>
+
+    <!-- PASTE YOUR MARKDOWN HERE INSIDE THE SCRIPT TAG -->
+    <script id="markdown-content" type="text/markdown">
+# Zero To Proximity-Policy Optimisers
+
+The goal of this blog is *to help someone who knows nothing about reinforcement learning build a proximity policy optimiser*. As such, I've started with basic RL theory. If you are already familiar with theory and want to dive into the implementation, please skip to the implementation.
+
+Reinforcement learning is **very** heavy in mathematics. Although I've tried to explain many of the more complex concepts in short form, it's much better if you learn them yourself.
+
+Here are a few resources I'd suggest checking out for the math,
+
+Basic stat. & prob for basic RL [Khan Academy - Probability & Statistics](https://www.khanacademy.org/math/statistics-probability)
+
+A bit more detailed probability course. [Stanford CS299 - Probability For Machine Learning](https://see.stanford.edu/Course/CS229)
+
+Multivariable calculus for policy gradients & PPO Theory [Khan Academy - Multivariable Calculus](https://www.khanacademy.org/math/multivariable-calculus)
+
+---
+
+To  understand **proximity policy optimisers**, we first need to understand some *basic Reinforcement Learning Theory*. In reinforcement learning, we describe the entire state of the world, every minute detail, altogether at time/step $t$ as, $s_{t}$. $s$ is considered **the state of the world.** However, there are many possible cases/*environments* where $s$ *may not be fully observable;* in that case, we used $o$ which is the partial observation. It also helps to know the actions our agent can take. This is described as the **action space** of the agent.
+
+These **action spaces** can be both *continuous*, say in the case of an RL agent learning to play football, or *discrete*, in the case of, say, chess. This distinction is important as different kinds of algorithms may apply to different scenarios.
+
+The way the agent takes up a certain action from these action spaces is through **policies**, *policies may be defined as the brain of the agent itself*. Mathematically, a policy is a function $\mu$ over $s_{t}$ (a state at a given time step t) that gives us an action $a_{t}$ for that time/step.
+
+$$
+a_{t}=\mu (s_{t})
+$$
+However, policies need not be discrete; *in continuous environments, we can not directly use discrete action spaces.*  We can stochastically define a policy as,
+
+$$
+a_{t}\sim \pi (\cdot |s_{t})
+$$
+In **deep RL**, we use neural networks as the policy function. Here, to describe the *specific weights and biases* of the neural network, we use the subscripts $\theta$ or $\phi$, giving us,
+
+$$
+a_{t}=\mu_{\theta }(s_{t})
+$$
+
+$$
+a_{t}\sim \pi_{\phi }(\cdot |s_{t})
+$$
+This network is also known as the ***actor*** network, since it takes the actions.
+
+# Neural Networks
+
+If you know what neural networks are and how to implement them in C, you can jump to types of policies.
+
+**Neural networks** are a type of machine learning model that consists of *layers of interconnected nodes.*
+
+![Untitled design.png](../media/ppo-fig-01.png)
+
+Where each node contains a specific weight, and each layer has its own bias. The weights are multiplied, while the biases are added.
+
+![wb.png](../media/ppo-fig-02.png)
+
+You can think of each node as its own *linear regression* model, in the form $y=mx+b$.  Mathematically speaking, any layer in a neural network can be defined by
+$$
+y=f(\sum _{{i=1}}^{n}w_{i}x_{i}+b)
+$$
+
+$$
+\text{or}
+$$
+
+$$
+y=f(z)\text{where}z=\sum _{{i=1}}^{n}w_{i}x_{i}+b
+$$
+This is also known as the **forward pass** of the network, think of it like your input flowing forward through the layers of the network, and changing according to the nodes.
+
+This isn't super hard, it's just layers and layers of multiplication and addition happening.
+
+In python, this will look like.
+
+```python
+def forward(inputs, weights, bias):
+    sum = 0
+    for i in range(len(inputs)):
+        sum += inputs[i] * weights[i]
+    sum += bias
+    return f(sum)
+```
+
+The NumPy library can help us do it in a cleaner way (+ It's faster!)
+
+```python
+import numpy
+
+def forward(inputs, weights, bias):
+    return f(np.dot(inputs, weights) + bias)
+```
+
+You might be wondering what the function $f$ does, this is the *activation function,* although there are many activation functions, for the sake of our implementation we are only concerned with what is known as the **rectified linear unit(ReLU)** function. ReLU is defined as,
+
+$$
+\text{ReLU}(x)=max(0,x)
+$$
+
+```python
+def ReLU(x):
+    return np.maximum(0, x)
+```
+
+Of course, we don't want our neural network to only be one layer, we will need a neural network with multiple layers, these type of neural networks are also known as *multi-layer perceptrons*. For this, we will define a Neural Network class.
+
+```python
+
+def mlp(sizes, activation=nn.Tanh, output_activation=nn.Identity):
+    layers = []
+    for j in range(len(sizes)-1):
+        act = activation if j < len(sizes)-2 else output_activation
+        layers += [nn.Linear(sizes[j], sizes[j+1]), act()]
+    return nn.Sequential(*layers)
+```
+
+## (Optional) Quick brush over on Back-Propagation
+
+Now, although our neural network can do some operations, it still doesn't change those weights and biases. For that, we will need to use what is known as **back-propagation**.
+
+If the forward pass was information flowing through the neural network, imagine back-propagation as the feedback to the prediction flowing back through the neural network, adjusting everything in its path. This adjustment is decided by the *loss.* There are various ways to calculate this loss, but for our case, the proximal policy optimiser will provide us with the *policy loss*, so let's not worry about that right now.
+
+Mathematically, back-propagation relies heavily on the *chain rule* from calculus.
+
+Say, our neural network predicts ${\hat{y}}$, for input $x$ when the actual value was $y$, we have the loss ${L}(y,{\hat{y}})$. The goal is to compute the gradient $\frac{\partial L}{\partial W}$.
+
+So first, we'll define the derivatives of the activation function.
+
+$$
+f(x)=\begin{cases} x & \text{if } x>0 \\ 0 \end{cases}
+$$
+
+$$
+f^{'}(x)=\begin{cases} 1 & \text{if } x>0 \\ 0 \end{cases}
+$$
+
+We know that each layer in the neural network computes,
+
+$$
+z^{{(l)}}=W^{{(l)}}a^{{(l-1)}}+b^{{(l)}}
+$$
+
+$$
+a^{{(l)}}=f(z^{{(l)}})
+$$
+Where,
+
+$W^{{(l)}}$ is weight matrix at layer l
+
+$b^{{(l)}}$ is bias at layer l
+
+$a^{{(l)}}$ is activation/output of layer l
+
+and $z^{{(l)}}$ is the pre-activation/weighted sum/output of the neural network before we pass it through the activation function.
+
+Using the chain rule we want,
+
+$$
+\frac{\partial L}{\partial W^{{(l)}}}=\frac{\partial L}{\partial a^{{(l)}}}\cdot \frac{\partial a^{{(l)}}}{\partial z^{{(l)}}}\cdot \frac{\partial z^{{(l)}}}{\partial W^{{(l)}}}
+$$
+This will lead us to a term *Delta*
+
+$$
+\delta^{{(l)}}={\frac{\partial L}{\partial z}}^{{(l)}}
+$$
+Which is vital to machine learning. Once we have the delta, we can compute the gradients using,
+
+$$
+\frac{\partial L}{\partial W^{{(l)}}}=\delta^{{(l)}}(a^{{(l-1)}})^{T}
+$$
+
+$$
+\frac{\partial L}{\partial b^{{(l)}}}=\delta^{{(l)}}
+$$
+However, this change may be too big sometimes, and we may jump over the most optimal answer, thus, we multiply this with a small learning rate to slow it down a bit.
+
+So whenever we update our $W^{{(l)}}$ or $b^{{(l)}}$,
+
+$$
+W^{{(l)}}\leftarrow W^{{(l)}}-\eta \frac{\partial L}{\partial W^{{(l)}}}
+$$
+
+$$
+b^{{(l)}}\leftarrow b^{{(l)}}-\eta \frac{\partial L}{\partial b^{{(l)}}}
+$$
+In our case, our proximal policy optimiser will supply the loss.
+
+Continuously doing this, will lead to the weights and biases of the network getting optimised. This is known as *Stochastic Gradient Descent.*
+
+For more, I'd suggest to read: [This Post by IBM](https://www.ibm.com/think/topics/neural-networks)
+
+# Types of policies
+
+Policies come in two different flavours. One is the **deterministic policy** which we just covered, the other is **stochastic policies.** Which are *further* divided into **categorical Policies** & **diagonal Gaussian Policies.**
+
+**categorical policies** work for *discrete*  action spaces.
+
+$$
+a_{t}\sim \pi_{\phi }(\cdot |s_{t})
+$$
+Say a character can jump or move left and right, we'll get the actions,
+
+$$
+\pi (\cdot s_{t})={\pi (a_{1}|s_{t})=0.5,\pi (a_{2}|s_{t})=0.3,\pi (a_{3}|st)=0.2}
+$$
+If we build a neural network, where the last layer (of probabilities) is denoted by $P_{\theta }(s)$ we get the log likelihood as,
+
+$$
+log\pi_{\theta }(a|s)=log[P_{\theta }(s)]_{a}
+$$
+(since it will have as many entries as there are actions, we can use $a$ to index it.) This computation is very useful for PPOs.
+
+As a refresher, a **likelihood** just *measures how well a certain model predicts data.* Say you roll a dice 3 times, and get 2, 3, 5 - how *likely* are you to get that when the die is *fair*
+$$
+L=\frac{1}{6}\times \frac{1}{6}\times \frac{1}{6}=\frac{1}{216}
+$$
+ The reason we take a log instead, is that logs turn multiplication into addition, which simplifies computation.
+$$
+logL=log\frac{1}{6}+log\frac{1}{6}+log\frac{1}{6}
+$$
+
+For *continuous* action spaces, we must use what is known as the **diagonal gaussian policy.**
+
+To understand a **diagonal gaussian policy** we must first understand what a *multi-variate gaussian distribution* is.
+
+It's simple to understand, if a normal gaussian distribution describes how likely a thing is to happen.
+
+![Pasted image 20250328181622.png](../media/ppo-fig-03.png)
+
+A *Multi-variate Gaussian Distribution* defines how likely a combination of things are to happen. More precisely, it is defined by
+
+1. A mean vector $\mu$ which gives us the expected value of the distribution
+2. A covariance matrix $\Sigma$ which describes the relationship between the variables.
+  ![Pasted image 20250328181748.png](../media/ppo-fig-04.png)
+
+A **Co-Variance Matrix** of this distribution just tells how these things vary and are connected. Mathematically it is,
+
+$$
+\sum =\begin{array}{cccc}
+\text{Var}(X_{1}) & \text{Cov}(X_{1},X_{2}) & \text{Cov}(X_{1},X_{3}) & \cdots \\
+\text{Cov}(X_{2},X_{1}) & \text{Var}(X_{2}) & \text{Cov}(X_{2},X_{3}) & \cdots \\
+\text{Cov}(X_{3},X_{1}) & \text{Cov}(X_{3},C_{2}) & \text{Var}(X_{3}) & \cdots \\
+{\vdots } & {\vdots } & {\vdots } & \ddots
+\end{array}
+$$
+
+(You might've ran across this thing in seaborn!)
+
+![Pasted image 20250419231301.png](../media/ppo-fig-05.png)
+
+A **Diagonal Gaussian Distribution** is just the *diagonal* of the matrix. Essentially,
+
+$$
+\sum =\begin{array}{cccc}
+\text{Var}(X_{1}) & 0 & 0 & \cdots \\
+0 & \text{Var}(X_{2}) & 0 & \cdots \\
+0 & 0 & \text{Var}(X_{3}) & \cdots \\
+{\vdots } & {\vdots } & {\vdots } & \ddots
+\end{array}
+$$
+
+So, we can represent it using a *vector.*
+
+$$
+{\vec{\Sigma}}=\begin{array}{c}
+\text{Var}(X_{1}) \\
+\text{Var}(X_{2}) \\
+\text{Var}(X_{3}) \\
+{\vdots }
+\end{array}
+$$
+
+A **Diagonal Gaussian Policy** can be represented by a neural network $\mu_{\phi }(s)$ that maps from observations to mean actions.
+
+To represent our Diagonal Co-Variance matrix, we have two ways.
+
+1. Single Vector of Log of the Standard Deviations: $log\sigma$. This will be used in the PPO implementation.
+2. Neural network that maps from states to log standard deviation.
+
+In both cases, we use log of standard deviation as the *while the standard deviation cannot be non-negative, the logarithm can,* which makes things much easier for us.
+
+Given the mean action $\mu_{\theta }(s)$ and standard deviation $\sigma_{\theta }(s)$ and a vector $z$ of noise from a spherical Gaussian ($z\sim {N}(0,I)$). We can now get an action sample using the equation,
+
+$$
+a=\mu_{{\theta }}(s)+\sigma_{{\theta }}(s)\odot z
+$$
+
+A spherical gaussian is just like a normal gaussian distribution, but taken in 3-D, it's a sphere of points, where the center has the most, while the surface has the least.
+
+![Pasted image 20250329100109.png](../media/ppo-fig-06.png)
+
+The log likelihood of a Diagonal Gaussian Policy is found to be,
+
+$$
+log\pi_{{\theta }}(a|s)=-\frac{1}{2}(\sum _{{i=1}}^{k}(\frac{(a_{i}-\mu_{i})^{2}}{\sigma_{i}^{2}}+2log\sigma_{i})+klog2\pi )
+$$
+
+# Trajectories
+
+We've learnt what **actions** & **states** are. A **trajectory**, also known as an *episode* or *rollout*, is very simple, *it is just a sequence of states and actions in the world,* mathematically, it is represented by $\tau$ giving us,
+$$
+\tau =(s_{0},a_{0},s_{1},a_{1},\cdots )
+$$
+The very first state $s_{0}$ is sampled from something called a **start-state distribution**, denoted by $\rho_{0}$,
+
+$$
+s_{0}\sim \rho_{0}(\cdot )
+$$
+**State transitions** refer to what happens to the world between states $s_{t}$ and $s_{{t+1}}$, mathematically they are represented by,
+
+$$
+s_{{t+1}}=f(s_{t},a_{t})
+$$
+or
+
+$$
+s_{{t+1}}\sim P(\cdot |s_{t},a_{t})
+$$
+
+# Rewards
+
+When hearing about reinforcement learning, *you must've heard that it's all about rewarding the agent for doing good things, and punishing the agent for doing bad things.* Although that's only a subset of the type of reinforcement learning algorithms (as you may learn later, such as evolutionary algorithms.), **rewards & returns** are *critical* for Reinforcement Learning.
+
+Mathematically, it is a function $R$ over the current state & action, along with the next state.
+
+$$
+r_{t}=R(s_{t},a_{t},s_{{t+1}})
+$$
+However, since, $s_{{t+1}}=f(s_{t},a_{t})$, this can just be simplified to,
+
+$$
+r_{t}=R(s_{t},a_{t})
+$$
+(also, since $a_{t}=\mu_{\theta }(s_{t})$, we can also just go with, $r_{t}=R(s_{t})$)
+
+The goal of our agent is to maximise a *cumulative reward* over trajectory $\tau$, this can imply a few things, such as a finite un-discounted return, or an infinite discounted return etc. we'll learn what those terms mean in just a second, but, we can just use $R(\tau )$ to denote all of them.
+
+There are multiple kinds of returns, the first kind we'll look at, is the **finite-horizon un-discounted return**, *which just adds up the reward over a finite time frame.*
+
+$$
+R(\tau )=\sum _{{t=0}}^{T}r_{t}
+$$
+The second is the **infinite-horizon discounted return**, which fades off the further away from the current state you go.
+
+$$
+R(\tau )=\sum _{{t=0}}^{\infty }\gamma^{t}r_{t}
+$$
+*Why would we want to discount the further away rewards?* Well, it's mathematically better, we need the sum to converge, and with cumulative infinite rewards, it may not converge. Thus we discount the rewards.
+
+## The Goal
+
+The goal in Reinforcement Learning is to select a policy which *maximises* the **expected cumulative return** when the agent acts according to it.
+
+To express the expected return, we must first understand the probability distribution over trajectories.
+
+In a stochastic system, where the policy is $a_{t}=\pi (\cdot |s_{t})$, for a trajectory of $T$ steps the probability distribution will be,
+
+$$
+P(\tau |\pi )=\rho_{0}(s_{0})\prod _{{t=0}}^{{T-1}}P(s_{{t+1}}|s_{t},a_{t})\pi (a_{t}|s_{t})
+$$
+Therefore, we get the expected measure $J(\pi )$ to be,
+
+$$
+J(\pi )=\int_{\tau }P(\tau |\pi )R(\tau )=E_{\tau \sim \pi }[R(\tau )]
+$$
+Since we want to maximise this return, *we get that our optimal policy,* denoted by $\pi^{*}$ can be expressed by,
+
+$$
+\pi^{*}=argmax_{\pi }J(\pi )
+$$
+
+## Value Functions
+
+The **value functions** give a certain *value* to every state/state-action pair. Basically, say you start at state $s_{t}$ and act according to policy $\pi$ - The value will be the expected return you will get.
+
+The policy network is known as the *critic* network as it criticises the *actor's* actions.
+
+The four main functions to note are,
+
+1. On-Policy Value Function. Gives expected return when you start at $s$ and always act according to $\pi$
+  $$
+  V^{\pi }(s)=E_{\tau \sim \pi }[R(\tau )|s_{0}=s]
+  $$
+2. On-Policy Action-Value Function. Gives expected return when you start at $s$ and take an arbitrary action $a$ then always follow the policy $\pi$.
+  $$
+  Q^{\pi }(s,a)=E_{\tau \sim \pi }[R(\tau )|s_{0}=s,a_{0}=a]
+  $$
+3. The Optimal Value Function. Gives expected return if you start at $s$ and always act according to the *optimal policy.*
+  $$
+  V^{*}(s)=max_{\pi }E_{\tau \sim \pi }[R(\tau )|s_{0}=s]
+  $$
+4. The Optimal Action-Value Function. Action-Value for the optimal policy.
+  $$
+  Q^{*}(s,a)=max_{\pi }E_{\tau \sim \pi }[R(\tau )|s_{0}=s,a_{0}=a]
+  $$
+  also note a very common relation between Value & Action-Value functions
+  $$
+  V^{{\pi }}(s)=E_{a\sim \pi }[{Q^{{\pi }}(s,a)}]
+  $$
+
+  $$
+  V^{{*}}(s)=E_{a}[{Q^{{*}}(s,a)}]
+  $$
+
+# Policy Gradients
+
+*Reinforcement Learning* can be divided into two major branches, model-free & model-based RL. A model is a function which predicts state transitions and rewards. Although this allows our agent to plan by thinking ahead this type of environment is *not usually available.* In these scenarios, the agent has to learn the model through trial and error, which is very computationally expensive.
+
+The **proximity-policy optimiser** is a *model-free* Algorithm, so we'll be focussing on that.
+
+Model-Free Algorithms have two main methods to training agents. One is **Q-learning** which tries to approximate the optimal action-value function. The other, which is the focus of this blog, is *policy optimisation.*
+
+For the sake of simplicity, we'll be covering & implementing the most bare-bones equation for **policy gradients** in this blog.
+
+## A Bare-Bones Policy Gradient
+
+Here, we'll be working with a stochastic policy $\pi_{\theta }$. (although, I'll also cover a discrete variation later) - here we aim to maximise $J(\pi_{\theta })=E_{\tau \sim \pi_{\theta }}[R(\tau )]$. We'll first do a derivation for when R($\tau$) is the *finite-horizon discounted return.*
+
+From Eq. 2 under The Goal
+
+$$
+J(\pi_{\theta })=E_{\tau \sim \pi_{\theta }}[R(\tau )]=\int_{\tau }P(\tau |\pi )R(\tau )d\tau
+$$
+Now, taking the gradient with respect to $\theta$,
+
+$$
+\nabla_{\theta }J(\pi_{\theta })=\nabla_{\theta }\int_{\tau }P(\tau |\theta )R(\tau )d\tau
+$$
+Using the*leibniz's rule for integration* we can swap the gradient and the integral sign.
+
+$$
+=\int_{\tau }\nabla_{\theta }P(\tau |\theta )R(\tau )d\tau
+$$
+Since R($\tau$) is not dependant on $\theta$, *it does not need to come under the gradient.*
+
+Now, using what is known as the **log-derivative trick**, which simply refers to the derivative of $logx$ being $log\frac{1}{x}$ we can rearrange $\nabla_{\theta }P(\tau |\theta )$ as,
+
+$$
+\nabla_{\theta }P(\tau |\theta )=\frac{1}{P(\tau |\theta )}
+$$
+When we multiply both sides by $P(\tau |\theta )$
+
+$$
+\nabla_{\theta }P(\tau |\theta )=P(\tau |\theta )\nabla_{\theta }P(\tau |\theta )
+$$
+
+We can now write our equation as,
+
+$$
+=\int_{\tau }P(\tau |\theta )\nabla_{\theta }P(\tau |\theta )R(\tau )d\tau
+$$
+
+Taking a look at the probability of trajectory - Eq. 1 in The Goal,
+
+$$
+P(\tau |\pi )=\rho_{0}(s_{0})\prod _{{t=0}}^{{T}}P(s_{{t+1}}|s_{t},a_{t})\pi (a_{t}|s_{t})
+$$
+Taking it's logarithm gives us,
+
+$$
+logP(\tau |\pi )=log\rho_{0}(s_{0})+\sum _{{t=0}}^{{T}}logP(s_{{t+1}}|s_{t},a_{t})+log\pi (a_{t}|s_{t})
+$$
+However, since *the environment has no dependance on $\theta$*, we get that the gradients of $p_{0}(s_{0})$, $R(\tau )$ & $P(s_{{t+1}}|s_{t},a_{t})$ are all zero. Thus, when we take the gradient of the logarithm of probability of trajectory.
+
+$$
+\nabla_{\theta }logP(\tau |\theta )=\sum _{{t=0}}^{{T}}\nabla_{\theta }log\pi (a_{t}|s_{t})
+$$
+Putting this into our original equation, we get
+
+$$
+=\int_{\tau }P(\tau |\theta )\sum _{{t=0}}^{{T}}\nabla_{\theta }log\pi (a_{t}|s_{t})R(\tau )d\tau
+$$
+Re-writing in the expectation form we get the **policy gradient equation for finite horizon un-discounted settings** with a *T-Step* Trajectory.
+
+$$
+\nabla_{\theta }J(\pi_{\theta })=E_{\tau \sim \pi_{\theta }}[\begin{array}{c}
+\sum_{{t=0}}^{{T}}\nabla_{\theta }log\pi (a_{t}|s_{t})R(\tau )
+\end{array}]
+$$
+
+## Alternate Policy Gradient Derivations (Bonus)
+
+### Infinite Horizon Discounted Setting
+
+For an *infinite horizon discounted setting*, we have that
+
+$$
+R(\tau )=\sum _{{t=0}}^{\infty }\gamma^{t}r_{t}
+$$
+Our policy gradient expression changes to
+
+$$
+\nabla_{\theta }J(\pi_{\theta })=E_{\tau \sim \pi_{\theta }}[\begin{array}{c}
+\sum_{{t=0}}^{{\infty }}\nabla_{\theta }log\pi (a_{t}|s_{t})\sum_{{t^{'}=t}}^{\infty }\gamma^{{t^{'}-t}}r_{{t^{'}}}
+\end{array}]
+$$
+
+### Finite Horizon Un discounted Setting, when $R(\tau )$ depends on $\theta$ (When the parameters affect the environment)
+
+Similar to the original derivation we have,
+
+$$
+J(\pi_{\theta })=E_{\tau \sim \pi_{\theta }}[R(\tau ,\theta )]=\int_{\tau }P(\tau |\pi )R(\tau ,\theta )d\tau
+$$
+
+$$
+⇒\nabla_{\theta }J(\pi_{\theta })=\nabla_{\theta }\int_{\tau }P(\tau |\theta )R(\tau ,\theta )d\tau
+$$
+However, this time since $R(\tau )$ depends on $\theta$, when we use the *Leibniz's Rule* $R(\tau )$ will come under the gradient. So, our equation will change as,
+
+$$
+=\int_{\tau }R(\tau ,\theta )\nabla_{\theta }P(\tau |\theta )+P(\tau |\theta )\nabla_{\theta }R(\tau ,\theta )d\tau
+$$
+This can also be written as
+
+$$
+=\int_{\tau }R(\tau ,\theta )\nabla_{\theta }P(\tau |\theta )d\tau \;+\;\int_{\tau }P(\tau |\theta )\nabla_{\theta }R(\tau ,\theta )d\tau
+$$
+Again, from the probability of trajectory, eq. 1 in The Goal,
+
+$$
+P(\tau |\pi )=\rho_{0}(s_{0})\prod _{{t=0}}^{{T}}P(s_{{t+1}}|s_{t},a_{t})\pi (a_{t}|s_{t})
+$$
+
+$$
+⇒logP(\tau |\pi )=log\rho_{0}(s_{0})+\sum _{{t=0}}^{{T}}logP(s_{{t+1}}|s_{t},a_{t})+log\pi (a_{t}|s_{t})
+$$
+However, this time as the environment is dependant on $\theta$, so instead
+
+$$
+\nabla_{\theta }logP(\tau |\theta )=\nabla_{\theta }log\rho_{0}(s_{0})+\nabla_{\theta }\sum _{{t=0}}^{{T}}logP(s_{{t+1}}|s_{t},a_{t};\theta )+\nabla_{\theta }log\pi (a_{t}|s_{t};\theta )
+$$
+Now, under the Joint Probability Notation,
+
+$$
+P(s_{{t+1}},a_{t}|s_{t};\theta )=P(s_{{t+1}}|a_{t},s_{t};\theta )\pi (a_{t}|s_{t};\theta )
+$$
+
+$$
+⇒\nabla_{\theta }logP(\tau |\theta )=\nabla_{\theta }log\rho_{0}(s_{0})+\nabla_{\theta }\sum _{{t=0}}^{{T}}logP(s_{{t+1}},a_{t}|s_{t};\theta )
+$$
+Finally we get,
+$$
+\nabla_{\theta }J(\pi_{\theta })=E_{\tau \sim \pi_{\theta }}[\begin{array}{c}
+\nabla_{\theta }log\rho_{0}(s_{0})+\nabla_{\theta }\sum_{{t=0}}^{{T}}logP(s_{{t+1}},a_{t}|s_{t};\theta )
+\end{array}]
+$$
+
+## The Expected Grad-Prob-Lemma
+
+All probability distributions are *normalised.* (integration = $1$)
+
+$$
+\int_{x}P_{\theta }(x)=1
+$$
+Taking the gradient of both the sides,
+
+$$
+\nabla_{\theta }\int_{x}P_{\theta }(x)=\nabla_{\theta }1=0
+$$
+
+$$
+0=\nabla_{\theta }\int_{x}P_{\theta }(x)
+$$
+Using the log-derivative trick, we get,
+
+$$
+=\nabla_{\theta }\int_{x}P_{\theta }(x)logP_{\theta }(x)
+$$
+Writing in expectation form we get,
+
+$$
+0=E_{x\sim P_{\theta }}[logP_{\theta }(x)]
+$$
+
+This has been termed as the **expected grad-log-prob lemma.**
+
+### Reward-To-Go Policy Gradient
+
+In our policy gradient expression,
+
+$$
+\nabla_{\theta }J(\pi_{\theta })=E_{\tau \sim \pi_{\theta }}[\begin{array}{c}
+\sum_{{t=0}}^{{T}}\nabla_{\theta }log\pi (a_{t}|s_{t})R(\tau )
+\end{array}]
+$$
+Whenever we take a step to up our gradient ascent, it pushes the log-probabilities in proportion to $R(\tau )$, which is the sum of all reward *ever* obtained. Intuitively speaking, we don't really care about the rewards that came before the action was taken - only the ones after.
+
+Well, we can change the expression of the policy gradient to,
+
+$$
+\nabla_{\theta }J(\pi_{\theta })=E_{\tau \sim \pi_{\theta }}[\begin{array}{c}
+\sum_{{t=0}}^{{T}}\nabla_{\theta }log\pi (a_{t}|s_{t})\sum_{{t^{'}=t}}^{T}R(s_{{t^{'}}},a_{{t^{'}}},s_{{t^{'}+1}})
+\end{array}]
+$$
+This is known as the Reward-To-Go Policy Gradient.
+
+$$
+{\hat{R}}_{t}=\sum _{{t^{'}=t}}^{T}R(s_{{t^{'}}},a_{{t^{'}}},s_{{t^{'}+1}})
+$$
+This is known as the *'Reward To Go'*, from that point t.
+
+### Baselines
+
+An *immediate consequence* of this Grad-Log-Prob Lemma is that for any function $b(s_{t})$ we get,
+
+$$
+E_{a_{t}\sim \pi_{\theta }}[\nabla_{\theta }log\pi_{\theta }(a_{t}|s_{t})b(s_{t})]
+$$
+Which means we can add or subtract this value from our policy gradient as,
+
+$$
+\nabla_{\theta }J(\pi_{\theta })=E_{\tau \sim \pi_{\theta }}[\begin{array}{c}
+\sum_{{t=0}}^{{T}}\nabla_{\theta }log\pi (a_{t}|s_{t})\sum_{{t^{'}=t}}^{T}R(s_{{t^{'}}},a_{{t^{'}}},s_{{t^{'}+1}})-b(s_{t})
+\end{array}]
+$$
+
+$V^{\pi }$  cannot be computed exactly. It has to be approximated. This is usually done using a neural network $V_{\phi }(s_{t})$ which is updated along with the policy. In PPO, we use the equation
+$$
+\phi_{k}=argmin_{\phi }E_{s_{t},{\hat{R}}_{t}\sim \pi_{k}}[(V_{\phi }(s_{t})-{\hat{R}}_{t})^{2}]
+$$
+ to learn $V_{\phi }$.
+
+### Advantage Function
+
+In RL, we don't always need to know absolutely how good an action is, but *how good it is relative to other actions.* For this, we use what is known as the **advantage function**,
+
+$$
+A^{\pi }(s,a)=Q^{\pi }(s,a)-V^{\pi }(s)
+$$
+
+### Generalised Policy Gradient
+
+We have seen so far that the policy gradient has a general form.
+
+$$
+\nabla_{\theta }J(\pi_{\theta })=E_{\tau \sim \pi_{\theta }}[\begin{array}{c}
+\sum_{{t=0}}^{{T}}\nabla_{\theta }log\pi (a_{t}|s_{t})\Phi_{t}
+\end{array}]
+$$
+We can also put in the advantage function as $\Phi_{t}$,
+
+$$
+\Phi_{t}=A^{{\pi_{\theta }}}(s_{t},a_{t})
+$$
+
+# The Theory Behind PPO
+
+The main question behind **proximity policy optimisers** is, *"how can we take the biggest possible improvement step on a policy using the data we already have without stepping too far to decrease performance?"*
+
+The way a **PPO** does this is, by using a **clipping function** to *prevent large updates when we're optimising our policy.*
+
+Mathematically we define is as,
+
+$$
+L(\theta )=E[min(r_{t}(\theta )A_{t},\text{clip}(r_{t}(\theta ),1-\epsilon ,1+\epsilon )A_{t})]
+$$
+Where $r_{t}(\theta )$ is the *probability ratio between the new and the old probabilities,* and $\epsilon$ is a small value that lets us know *how much change is allowed.* Normally it is set as $0.2$
+
+## Deriving PPO From Policy Gradients
+
+From our Policy Gradient Theorem we have,
+
+$$
+J(\theta )=E_{\tau \sim \pi }[R(\tau )]
+$$
+
+$$
+\nabla_{\theta }J(\pi_{\theta })=E_{\tau \sim \pi_{\theta }}[\begin{array}{c}
+\sum_{{t=0}}^{{T}}\nabla_{\theta }log\pi (a_{t}|s_{t})\Phi_{t}
+\end{array}]
+$$
+Setting $\Phi_{t}=A_{t}$ (Advantage Function), we get,
+
+$$
+\nabla_{\theta }J(\pi_{\theta })=E_{\tau \sim \pi_{\theta }}[\begin{array}{c}
+\sum_{{t=0}}^{{T}}\nabla_{\theta }log\pi (a_{t}|s_{t})A_{t}
+\end{array}]
+$$
+We now introduce *importance sampling*. Basically, our agent has collected experience on old policy $\pi_{{old}}$, but we're trying to train $\pi_{{new}}$, in this scenario, we can use the ratio $r_{t}(\theta )=\frac{\pi_{{new}}(a_{t}|s_{t})}{\pi_{{old}}(a_{t}|s_{t})}$. So basically, when our new policy chooses the action more often than the old policy, that means its should *count as more.* But if our old policy chooses it more, it should *count for less.*
+
+So, we get the objective to be,
+
+$$
+L(\theta )=E[r_{t}(\theta )A_{t}]
+$$
+*This lets us reuse date from old policies for the new one.* The problem with the above objective is that *larger policy updates can make training unstable.* I.E. one policy uses an action way more often than the normal. To fix this, we prevent $r_{t}$ from moving too far from one using the clip function.
+
+What clip does is, if $r_{t}(\theta )$ is within $[1-\epsilon ,1+\epsilon ]$ there is no effect, otherwise, the update is clipped to be within that range.
+
+So - after all that - we finally get,
+
+$$
+{\lceil }\;\;L^{{CLIP}}(\theta )=E[min(r_{t}(\theta )A_{t},\text{clip}(r_{t}(\theta ),1-\epsilon ,1+\epsilon )A_{t})]\;\;{\rfloor }
+$$
+
+This is known as **PPO-CLIP.**
+
+$r_{t}(\theta )$ is sometimes also called the *surrogate objective.*
+
+Our main goal, is to find $\theta$ such that $L^{{\text{CLIP}}}$ is maximised. Therefore,
+
+$$
+\theta_{{k+1}}=argmax_{{\theta }}L^{{\text{CLIP}}}(\theta )
+$$
+
+$$
+\theta_{{k+1}}=argmax_{{\theta }}E[min(r_{t}(\theta )A_{t},\text{clip}(r_{t}(\theta ),1-\epsilon ,1+\epsilon )A_{t})]
+$$
+
+## PPO-Penalty
+
+There is another version of proximal-policy optimisers known as **PPO-Penalty**, this is closer to a **Trust-Region Policy Optimiser** than PPO-Clip, but instead of using a clip to impose a hard constraint, it instead uses a *penalty* that scales with training instead. For the sake of this blog, we will be only covering **PPO-CLIP.**
+
+# Creating PPO-CLIP
+
+To create the final python implementation of PPO-CLIP, we will be using the algorithm from [Open AI's Spinning Up Docs](https://spinningup.openai.com/en/latest/algorithms/ppo.html)
+
+![Pasted image 20250419232847.png](../media/ppo-fig-07.png)
+
+ Before we start, let's import a few dependencies, we'll be working with [PyTorch](https://pytorch.org/) & [Gymnasium](https://gymnasium.farama.org/index.html) which is a standard API that'll help us build the environment for the training.
+
+```python
+import torch
+import gymnasium as gym
+```
+
+We'll first create the `__init__` function which initialises all our variables & hyper parameters.
+
+```python
+class PPO:
+	def __init__(self, environment, network_class , **hyperparameters):
+```
+
+We have to check if the environment is compatible or not.
+
+```python
+assert isinstance(env.observation_space, gym.spaces.Box), "Observation space must be of type Box"
+assert isinstance(env.action_space, gym.spaces.Box), "Action space must be of type Box"
+```
+
+If our environment is not compatible, this will automatically throw an error. Now, we can extract the information from our environment.
+
+```python
+self.env = env
+self.observation_dim = env.observation_space.shape[0]
+self.action_dim = env.action_space.shape[0]
+```
+
+After that - we'll initialise our actor & critic networks. This is the first step in the algorithm
+
+![Screenshot 2025-04-19 at 11.30.44 PM.png](../media/ppo-fig-08.png)
+
+```python
+self.actor = network_class(self.observation_dim, self.action_dim) # Step 1
+self.critic = network_class(self.observation_dim, 1)
+```
+
+Now, we have to initialise our hyper parameters, we'll do that using a function `hyperparameter_init()` this is just to make our final code a bit cleaner.
+
+```python
+def hyperparameter_init(self, hyperparameters):
+	self.TIMESTEPS_PER_BATCH = 4800
+	self.TIMESTEPS_PER_EPISODE = 1600
+	self.UPDATES_PER_ITERATION = 5
+	self.lr = 0.005
+	self.gamma = 0.95
+	self.clip = 0.2
+	self.render = True
+	self.render_every_i = 10
+```
+
+And, in our, `__init__()` function we add,
+
+```python
+self.hyperparameter_init(hyperparameters)
+```
+
+We'll start creating our learning loop - which is step two.
+
+![Pasted image 20250419234705.png](../media/ppo-fig-09.png)
+
+Within a new function `learn` we'll define the loop as,
+
+```python
+def learn(self, total_timesteps)
+	timesteps_completed = 0
+	iter_count = 0 # number of iterations till now, we'll use this to save after *n* iterations
+	while timesteps_completed < total_timesteps: # Step 2
+		pass
+
+	iter_count +=1
+```
+
+The `rollout()` function 'rolls out' the entire batch data till now in front of us.
+
+![Pasted image 20250419234758.png](../media/ppo-fig-10.png)
+
+```python
+def learn(self, total_timesteps)
+	timesteps_completed = 0
+	iter_count = 0 # number of iterations till now, we'll use this to save after *n* iterations
+	while timesteps_completed < total_timesteps: # Step 2
+		batch_observations, batch_actions, batch_log_probs, batch_reward_to_gos, batch_episode_lengths = self.rollout()  # Step 3
+
+	t_so_far += np.sum(batch_lens)
+
+	iter_count +=1
+```
+
+Defining `rollout()`. Here, we'll be calculating the reward to go using `reward_to_gos()` function, this is step 4.
+
+![Pasted image 20250420020730.png](../media/ppo-fig-11.png)
+
+```python
+def rollout(self):
+	# Batch data that gets returned
+	batch_observations = []
+	batch_actions = []
+	batch_log_probs = []
+	batch_rewards = []
+	batch_reward_to_gos = []
+	batch_episode_lengths = []
+
+	episode_rewards=[] # Keeps track of rewards per episode, get's cleared after every episode.
+
+	timesteps = 0
+
+	while t < self.TIMESTEPS_PER_BATCH: #
+		episode_rewards = []
+
+		# Resetting the environment after each batch.
+		observation, _ = self.env.reset()
+		done = False
+
+		for episode_timestep in range(self.TIMESTEPS_PER_EPISODE):
+			# Rendering the environment
+			if self.render and (self.logger['i_so_far'] % self.render_every_i == 0) and len(batch_lens) == 0:
+					self.env.render()
+			# Incrementing The Timestep
+			timesteps += 1
+
+			# Now - we'll track the observations in this batch,
+			batch_observations.append(observation)
+
+			# We'll be using our get_action function to calculate the action & log_prob
+
+			action, log_prob = self.get_action(observation)
+			observation, reward, terminated, truncated, _ = self.env.step(action)
+
+			done = truncated | terminated
+
+			# Tracking the recent rewards, & action, probs
+			episode_rewards.append(reward)
+			batch_actions.append(action)
+			batch_log_probs.append(log_prob)
+
+			if done:
+				break
+
+		# Tracking lengths
+		batch_episode_lengths.append(ep_t + 1)
+		batch_rewards.append(episode_rewards)
+
+	# Reshaping Data Into Tensors
+	batch_observations = torch.tensor(batch_observations, dtype=torch.float)
+	batch_actions = torch.tensor(batch_actions, dtype=torch.float)
+	batch_log_probs = torch.tensor(batch_log_probs, dtype=torch.float)
+	batch_reward_to_gos = self.compute_reward_to_gos(batch_rewards)     # STEP 4
+
+	return batch_obs, batch_acts, batch_log_probs, batch_reward_to_gos, batch_lens
+```
+
+Looking back at the theory from section Reward-To-Go Policy Gradient, we see that, reward to go is defined as,
+
+$$
+{\hat{R}}_{t}=\sum _{{t^{'}=t}}^{T}R(s_{{t^{'}}},a_{{t^{'}}},s_{{t^{'}+1}})
+$$
+Therefore, we can define the function as,
+
+```python
+def compute_reward_to_gos(self, batch_rewards):
+	batch_reward_to_gos = []
+
+	for episode_rewards in reversed(batch_rewards):
+		discounted_reward = 0
+		for reward in reversed(episode_rewards):
+			discounted_reward = reward + discounted_reward * self.gamma
+			batch_reward_to_gos.insert(0, discounted_reward)
+
+	batch_reward_to_gos = torch.tensor(batch_reward_to_gos, dtype=torch.float)
+
+	return batch_reward_to_gos
+```
+
+We also need to develop our `get_action()` function. According to,
+
+$$
+a_{t}\sim \pi_{\phi }(\cdot |s_{t})
+$$
+
+```python
+def get_action(self, observation)
+mean = self.actor(observation)
+
+dist = torch.distributions.MultivariateNormal(mean, self.cov_mat) # Defines a distribution
+
+action = dist.sample() # Samples action
+
+log_prob = dist.log_prob(action) # Calculates log probability for action
+
+return action.detach().numpy(), log_prob.detach()
+```
+
+Cool, now going back to our `learn()` function, according to step 5, we'll build out the Advantage Function,
+
+![Screenshot 2025-04-20 at 2.33.18 AM.png](../media/ppo-fig-12.png)
+
+```python
+V, _ = self.evaluate(batch_obs, batch_acts) # Step 5
+A_k = batch_reward_to_gos - V.detach()
+```
+
+Now, we have to update the PPO-Clip Objective.
+
+![Screenshot 2025-04-20 at 4.10.22 AM.png](../media/ppo-fig-13.png)
+
+For this, first, we'll go back to the `__init__()` function, and initialise the Adam optimiser.
+
+First, import the Adam optimiser,
+
+```python
+from torch.optim import Adam
+```
+
+```python
+self.actor_optimiser = Adam(self.actor.parameters(), lr=self.lr)
+self.critic_optimiser = Adam(self.critic.parameters(), lr=self.lr)
+```
+
+Back in the `learn()` function, we start out summation loop within the main while loop, we first get $V_{\phi }$ & $\pi_{\theta }(a_{t}|s_{t})$.
+
+```python
+for _ in range(self.UPDATES_PER_ITERATION):
+	V, curr_log_probs = self.evaluate(batch_observations, batch_actions)
+
+	ratios = torch.exp(curr_log_probs - batch_log_probs)
+
+	#Calculating surrogate loss r_\theta
+
+	surr1 = ratios * A_k
+	surr2 = torch.clamp(ratios, 1 - self.clip, 1 + self.clip) * A_k
+
+	actor_loss = (-torch.min(surr1, surr2)).mean() # Negative because adam minimizes, and we want to maximize.
+	critic_loss = torch.nn.MSELoss()(V, batch_reward_to_gos)
+
+	# Next - we calculate the gradients for both the networks
+
+	self.actor_optimiser.zero_grad()
+	actor_loss.backward(retain_graph=True)
+	self.actor_optimiser.step()
+
+	self.critic_optimiser.zero_grad()
+	critic_loss.backward()
+	self.critic_optimiser.step()
+```
+
+All `evaluate()`  does here is determine the values of each observation along with the log probabilities of each action in the most recent batch.
+
+```python
+def evaluate(self, batch_observations, batch_actions)
+		V = self.critic(batch_observations).squeeze()
+
+		mean = self.actor(batch_observations)
+		dist = MultivariateNormal(mean, self.cov_mat)
+		log_probs = dist.log_prob(batch_actions)
+
+		return V, log_probs
+```
+
+That's it! You can check out the final code on [my github](https://github.com/AdalricP/PPO-Bare-Bones-Python/tree/main)
+
+# Further Reading & Credits
+
+Congratulations on getting this far! You can now create the basis for a proximal-policy optimiser from scratch in python. :) If you'd like to read more about policy optimisers & deep RL in general, here are a few links you should check out.
+
+[Trust-Region Policy Optimisation (what PPO is based off of)](https://spinningup.openai.com/en/latest/algorithms/trpo.html)
+
+[DDRG](https://spinningup.openai.com/en/latest/algorithms/ddpg.html)
+
+[Vanilla Policy Gradient](https://spinningup.openai.com/en/latest/algorithms/vpg.html)
+
+[PPO Implementation Code](https://github.com/ericyangyu/PPO-for-Beginners/blob/master/ppo.py)
+    </script>
+
+    <script>
+        const markdown = document.getElementById('markdown-content').textContent;
+
+        // Protect LaTeX from marked.js
+        // We replace $$...$$ and $...$ with placeholders
+        const mathExpressions = [];
+        let protectedMarkdown = markdown.replace(/\$\$([\s\S]*?)\$\$|\$((?:\\.|[^$])*)\$/g, (match) => {
+            mathExpressions.push(match);
+            return `MATH_EXPRESSION_${mathExpressions.length - 1}`;
+        });
+
+        // Handle Obsidian-style image links ![[path]] -> ![filename](../media/filename)
+        protectedMarkdown = protectedMarkdown.replace(/!\[\[(.*?)\]\]/g, (match, path) => {
+            const filename = path.split('/').pop();
+            const encodedFilename = encodeURIComponent(filename);
+            return `![${filename}](../media/${encodedFilename})`;
+        });
+
+        // Parse Markdown
+        const html = marked.parse(protectedMarkdown);
+
+        // Restore LaTeX
+        const finalHtml = html.replace(/MATH_EXPRESSION_(\d+)/g, (match, index) => {
+            return mathExpressions[index];
+        });
+
+        document.getElementById('content').innerHTML = finalHtml;
+
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise();
+        }
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+
+            // Update active button
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('onclick').includes(theme)) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Save preference
+            localStorage.setItem('redshift-theme', theme);
+        }
+
+        // Load preference
+        const savedTheme = localStorage.getItem('redshift-theme') || 'night';
+        setTheme(savedTheme);
+    </script>
+</body>
+
+</html>
