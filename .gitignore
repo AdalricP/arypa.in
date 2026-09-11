@@ -1,1 +1,4 @@
 .DS_Store
+kill-list/config.php
+kill-list/state.php
+kill-list/auth-state.php

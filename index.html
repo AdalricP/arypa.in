@@ -1,170 +1,183 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>arypa.in</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap"
-        rel="stylesheet">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Aryan Pahwani — physics, computer science, and bits of robotics." />
+  <title>Aryan Pahwani</title>
+  <link rel="icon" href="profile.jpg" type="image/jpeg" />
+  <link rel="apple-touch-icon" href="profile.jpg" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [["$", "$"], ["\\(", "\\)"]], displayMath: [["$$", "$$"], ["\\[", "\\]"]] },
+      startup: { ready() { MathJax.startup.defaultReady(); window.dispatchEvent(new Event("mathjax-ready")); } }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="script.js" defer></script>
 </head>
-
 <body>
-    <h1>Aryan Pahwani</h1>
-    <p>Physics + CS Undergrad. Interested in a broad range of experimental physics & deep ml research.</p>
-    <p class="affiliations">currently engineer @ zamana<br>
-        prev @join_ef, @iitguwahati, @wolframphysics, @csir_IND, @rootefellowship</p>
-    <!-- Tab Navigation -->
-    <nav class="tabs">
-        <button class="tab-btn active" onclick="openTab('projects')">Projects</button>
-        <button class="tab-btn" onclick="openTab('blog')">Blog</button>
-        <button class="tab-btn" onclick="openTab('reading')">Reading</button>
-    </nav>
+  <div class="site-shell">
+    <aside class="sidebar">
+      <nav class="section-menu" aria-label="Site sections">
+        <button class="menu-button is-active" type="button" data-tab="about" aria-selected="true">About me</button>
+        <button class="menu-button" type="button" data-tab="pan-automata" aria-selected="false">Pan Automata</button>
+        <button class="menu-button" type="button" data-tab="reading" aria-selected="false">Readings</button>
+        <div class="reading-menu">
+          <button class="sub-menu-button" type="button" data-parent="reading" data-subtab="recommendations" aria-selected="false">Recommendations</button>
+          <button class="sub-menu-button" type="button" data-parent="reading" data-subtab="technical-reads" aria-selected="false">Technical Reads</button>
+        </div>
+        <button class="menu-button" type="button" data-tab="blogs" aria-selected="false">Blogs</button>
+        <button class="menu-button" type="button" data-tab="essays" aria-selected="false">Essays</button>
+        <button class="menu-button" type="button" data-tab="experiments" aria-selected="false">Experiments</button>
+        <button class="menu-button" type="button" data-tab="work" aria-selected="false">Work</button>
+        <div class="work-menu">
+          <button class="sub-menu-button" type="button" data-parent="work" data-subtab="projects" aria-selected="false">Projects</button>
+          <button class="sub-menu-button" type="button" data-parent="work" data-subtab="papers" aria-selected="false">Papers</button>
+        </div>
+      </nav>
+    </aside>
+    <main>
+    <header class="page-header">
+      <img class="profile-photo" src="profile.jpg" alt="Portrait of Aryan Pahwani" width="400" height="400" />
+      <div>
+        <h1><span>Ary</span>an <span>Pa</span>hwani</h1>
+        <p>18, Physics, CS &amp; Robotics :) <span class="header-links"><a href="https://x.com/aryanpahwani" target="_blank" rel="noopener noreferrer">X/Twitter</a><a href="mailto:pahwani.aryan@gmail.com">Email</a></span></p>
+      </div>
+    </header>
 
-    <!-- Projects Section -->
-    <div id="projects" class="tab-content active">
+    <section class="tab-panel is-active" id="about">
+      <h2>About me</h2>
+      <p>18, Physics, Computers and Robots.</p>
+      <p>Heya! Aryan here. :) I’m a self-taught phyngineer<sup><a href="#phyngineer-note">1</a></sup>. Previously I was part of the <a href="https://www.joinef.com/" target="_blank" rel="noopener noreferrer">Entrepreneur First</a> B26 Cohort, <a href="https://www.iitg.ac.in/" target="_blank" rel="noopener noreferrer">IIT Guwahati</a> (Year 1 dropout), and the <a href="https://www.csr.res.in/" target="_blank" rel="noopener noreferrer">UGC-DAE Consortium for Science Research</a>. I never went to school, and have grown up on books and the internet. Because of this, I have an immense desire to <a href="#reading" data-site-tab="reading">read and consume knowledge like no one else</a>.</p>
+      <p>I’m dedicating the next decade of my life to going all in on learning as much about robots and automation as possible. I will create one of the greatest robotics ventures and achieve my vision of <em>pan automata.</em></p>
+      <p>To stay idle while your fellow man spends countless nights working unwillingly is a great sin. I believe work should not be <em>mandatory</em><sup><a href="#automation-note">2</a></sup>. I believe we should aim for complete automation of all human labour within a decade — and I believe the technology is <em>almost</em> here. So this is the perfect time to solve this problem.</p>
+
+      <h2>Past Work</h2>
+      <ul>
+        <li>I was previously an engineer at <a href="https://zamana.com/" target="_blank" rel="noopener noreferrer">Zamana</a>, building the most personalised shopping experience ever. A large reason for why I joined was that I believe shopping should be completely automated. I shouldn’t have to make mental calculations bogged by my inherent biases of whether a purchase makes my life better. If something makes my life better, I’d rather it just gets bought for me. This is related to my vision of Pan Automata.</li>
+        <li>I was previously a co-founder @ <a href="https://rexion.ai/" target="_blank" rel="noopener noreferrer">Rexion</a>, multi-agent systems for vulnerability discovery. This was my first time starting a company. I made a lot of mistakes, a whole lot. And though I do regret quite a few of them, I think the amount of stuff I learnt was well worth it.</li>
+      </ul>
+
+      <h2>Current quests<sup><a href="https://himat.github.io/posts/life_quests_not_goals/" target="_blank" rel="noopener noreferrer">3</a></sup></h2>
+      <p>I’m a <a href="https://www.beyondintractability.org/essay/sum" target="_blank" rel="noopener noreferrer">positive-sum individual at heart</a>, and I think <a href="https://modelthinkers.com/mental-model/surface-area-of-luck" target="_blank" rel="noopener noreferrer">increasing your surface area of luck</a> is one of the most efficient ways to get where you want to go. Publicising what you are trying to do is part of that. These are my quests: if you think they align with yours and would like to work together, if there is any way I can help you (which I promise to do, to the best of my ability), or any way you can help me, <a href="mailto:pahwani.aryan@gmail.com">drop a message</a>!</p>
+      <p>My quests right now are:</p>
+      <ul>
+        <li><a class="secret-quest" href="kill-list/">Establish Ottovon: The automation company.</a> (Yes, Otto von Bismarck, auto-, it’s a pun.)</li>
+        <li><a class="secret-quest" href="kill-list/">Become one of the best robotics engineers out there.</a></li>
+      </ul>
+
+      <h2>Theme of the year</h2>
+      <p>I like to live every year with one concept as a theme!</p>
+      <ul>
+        <li>2026: experimentation — action produces information ;)</li>
+        <li>2025: volume — doing as much as you can’t.</li>
+        <li>2024: loose ends — fixing up threads in my life that I haven’t completed.</li>
+      </ul>
+
+      <h2>Feedback</h2>
+      <p>Drop some feedback! <a href="https://admonymous.co/aryan-pahwani" target="_blank" rel="noopener noreferrer">admonymous.co/aryan-pahwani</a></p>
+
+      <div class="about-notes">
+        <p id="phyngineer-note"><sup>1</sup> My term for someone who pursues both physics and engineering in extreme depth.</p>
+        <p id="automation-note"><sup>2</sup> I believe in the merits of the free market, and I believe inequality is not necessarily bad. It is not contradictory to believe a <em>comfortable</em> life should be an affordance we can give to everyone, and this is only possible through complete automation. This frees up people to work not for riches or fame, but for wealth and glory.</p>
+        <p><sup>3</sup> <a href="https://himat.github.io/posts/life_quests_not_goals/" target="_blank" rel="noopener noreferrer">Life quests, not goals.</a></p>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="pan-automata">
+      <h2>Pan Automata</h2>
+      <p>Coming soon...</p>
+    </section>
+
+    <section class="tab-panel" id="reading">
+      <div class="sub-tab-panel is-active" id="recommendations" data-parent="reading">
+        <h2>Reading</h2>
+        <blockquote>“I like to read. And once I read something, I understand it, and once I understand it, I never forget it.”</blockquote>
+        <p>I love to read and I read a crap ton! Here are my top 7 books:</p>
+        <ol>
+          <li><cite>Poor Charlie’s Almanack</cite> by Charles T. Munger</li>
+          <li><cite>Zero to One</cite> by Peter Thiel</li>
+          <li><cite>The Autobiography of Benjamin Franklin</cite> by Benjamin Franklin</li>
+          <li><cite>The Mind of Napoleon</cite> by J. Christopher Herold</li>
+          <li><cite>Shoe Dog</cite> by Phil Knight</li>
+          <li><cite>The Goal</cite> by Eliyahu M. Goldratt</li>
+          <li><cite>The Nvidia Way: Jensen Huang and the Making of a Tech Giant</cite> by Tae Kim. This is by far my favourite book.</li>
+        </ol>
+        <h3>What I’m currently reading</h3>
+        <ul>
+          <li><cite>Modern Control Systems</cite> by Richard C. Dorf and Robert H. Bishop</li>
+          <li><cite>Bismarck: A Life</cite> by Jonathan Steinberg</li>
+        </ul>
+      </div>
+
+      <div class="sub-tab-panel" id="technical-reads" data-parent="reading">
+        <h2>Technical Reads</h2>
+        <p><a href="https://docs.google.com/spreadsheets/d/1xHiW-HU1PNqQrYB39qdcVP8AxqkY-Tu_BaqDmSmqQSc/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Check the list out here.</a></p>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="blogs">
+      <h2>Blogs</h2>
+      <p><a href="redshift/">RedShift</a> — light physics, math &amp; CS theory.</p>
+    </section>
+
+    <section class="tab-panel" id="essays">
+      <h2>Essays</h2>
+      <ul class="essay-list">
+        <li><a href="essays/simple-ideas/" data-essay="simple-ideas">Simple Ideas</a></li>
+        <li><a href="essays/clarity/" data-essay="clarity">Clarity</a></li>
+        <li><a href="essays/work-extremely-hard/" data-essay="work-extremely-hard">Work Till Your Eyes Burn</a></li>
+        <li><a href="essays/environment-change-vector/" data-essay="environment-change-vector">Environment Change Vector</a></li>
+      </ul>
+      <article class="essay-reader" id="essay-reader" hidden aria-live="polite"></article>
+    </section>
+
+    <section class="tab-panel" id="experiments">
+      <h2>Experiments</h2>
+      <p>Log of random funky experiments I tried out with Claude, purely for fun and curiosity.</p>
+      <article class="experiment-entry">
+        <h3>2026-09-05 — LLM wizard duels</h3>
+        <p>This experiment has two Claude subagents each write their own spells (small JS incantations priced by length and structure — ifs and loops cost extra mana) and a control policy for a pixel-art dueling arena, then revise them over 10 generations seeing only the battle logs.</p>
+        <p>The strategies escalated on their own from burst races through elemental counter-picks to a pixel-by-pixel range arms race and finally quarter-second opening-tempo fights, with one agent taking the series 7 generations to 3 across 90 logged matches.</p>
+        <p>The agents kept finding pricing loopholes (comment-padding incantations for power, golfing policies into ternaries to dodge the if-statement tax), and the sharpest lesson was that a build tested 14–1 against a mock of its opponent lost 0–9 to the real one — a third challenger written by a non-Claude model via OpenRouter would be the natural next round.</p>
+        <a href="https://github.com/AdalricP/experiments/tree/main/wizard-arena" target="_blank" rel="noopener noreferrer"><img class="experiment-image" src="https://raw.githubusercontent.com/AdalricP/experiments/main/assets/wizard-arena-victory.jpg" alt="Wizard arena victory screen" /></a>
+      </article>
+      <article class="experiment-entry">
+        <h3>2026-09-12 — Pole balancing</h3>
+        <p>This experiment tests how a closed-loop control system performs against learning-based models on the same cart-pole task, using random actions, classical controllers, tabular RL, neural RL, and an RL-to-LQR safety hybrid.</p>
+        <p>PID and LQR reliably hold the pole for the 1,000-step limit while the learning agents start untrained and expose their episode-length and loss curves as they improve.</p>
+        <p>The dashboard makes the trade-off between a known control model and learning from interaction easy to watch.</p>
+        <a href="https://github.com/AdalricP/experiments" target="_blank" rel="noopener noreferrer"><img class="experiment-image" src="https://raw.githubusercontent.com/AdalricP/experiments/main/assets/pole-balancing-dashboard.png" alt="Pole-balancing experiment dashboard" /></a>
+      </article>
+    </section>
+
+    <section class="tab-panel" id="work">
+      <div class="sub-tab-panel is-active" id="work-main" data-parent="work">
+      <h2>Work</h2>
+      <p>I believe the best way to work is a “hub-and-spoke” system: collaboration on ideas, then intense periods of isolated deep work. I believe one should <a href="essays/work-extremely-hard/" data-essay="work-extremely-hard">work till their eyes burn</a>. The people who I try to emulate the most in my work are:</p>
+      <ol>
+        <li>Richard Feynman, chasing simplicity in problems and boiling things down to <a href="https://fs.blog/first-principles/" target="_blank" rel="noopener noreferrer">first principles</a><sup><a href="#first-principles-note">1</a></sup>.</li>
+        <li>Charlie Munger, using a lattice of <a href="https://fs.blog/mental-models/" target="_blank" rel="noopener noreferrer">mental models</a> to bring in wisdom from various disciplines, and being extremely <em>reliable.</em></li>
+        <li>Paul Erdős: hyper-collaboration, extreme volume, and endurance. I like working long, hyper-productive hours. I like being around people and bouncing ideas off others. I’m also quite nomadic in my lifestyle.</li>
+        <li>Napoleon Bonaparté: meticulous preparation and rigorousity. <em>If I do everything, I win.</em></li>
+      </ol>
+      <p>I also value the concept of Ppalli-Ppalli. It translates from Korean to “Speed-Speed”: if something can be done quicker, it should be. A page taken out of <a href="https://sigilwen.ca/" target="_blank" rel="noopener noreferrer">Sigil Wen</a>’s book, I think one should work with high urgency and blistering intensity. I try to emulate these principles to the best of my ability.</p>
+      <hr>
+      <p>If you would like to work together, please <a href="mailto:pahwani.aryan@gmail.com">send me an email</a> :) My primary work right now revolves around control systems and robots broadly.</p>
+      <div class="about-notes"><p id="first-principles-note"><sup>1</sup> It’s unfortunate that “first principles” has become a buzzword recently, knowing how useful the concept is.</p></div>
+      </div>
+      <div class="sub-tab-panel" id="projects" data-parent="work">
         <h2>Projects</h2>
-        <text>A bunch of interesting projects I've worked on in the past</text>
-
-        <ul>
-            <li><a href="https://cuddles.arypa.in">Cuddles - Video editor, uses FFmpeg.wasm to run on your browser,
-                    couldn't
-                    find a lightweight browser solution to trim video clips so I built my own!</a></li>
-            <li><a href="https://hermes.arypa.in">Project Hermes - I've been trying to meet interesting people and
-                    founders
-                    a whole lot recently; I was having a lot of trouble finding the type of people I was looking for -
-                    so I
-                    built a directory with LLM search to make it easier!</a></li>
-            <li><a href="https://github.com/AdalricP/3D-Rendering-Engine">Tesseris - 3D Rendering engine built using C,
-                    Vulkan and SDL, originally meant for my projective geometry course, but it got a biiit out of hand
-                    :P</a></li>
-            <li>Arduino Replica of the South Korean SGR-A1 Automated Weapons System</li>
-            <li><a href="https://jukebox-capitalists.company.site/">jukebox-capitalists - Custom Speakers with Pan-India
-                    shipping. </a></li>
-            <li><a href="https://github.com/AdalricP/Arxis">Arxis - Voice Assistant based off of LLaMa3.</a></li>
-            <li><a href="https://github.com/AdalricP/AuVisM">AuVisM - A simple audio visualiser for macOS that stays on
-                    your
-                    desktop.</a></li>
-            <li><a href="https://github.com/AdalricP/Verglas">Verglas - A Music Sheet Generator for .musicXML files
-                    based
-                    off of GPT-2 along with the entire Leider Corpus translated .mxl for easier use with machine
-                    learning
-                    models.</a></li>
-            <li><a href="https://github.com/AdalricP/raytracing-project">Simple raytracing engine/scene viewer made in
-                    C++,
-                    SDL</a></li>
-            <li><a href="https://github.com/AdalricP/p2pproximityvoicechat">Peer-2-peer proximity voice chat using
-                    ThreeJS &
-                    WebRTC</a></li>
-        </ul>
-
-        <text>Some quick recent side projects</text>
-        <ul>
-            <li><a href="huffman">Huffman Encoder Visualiser</a></li>
-            <li><a href="https://github.com/AdalricP/overcomplicated-shannon-fano-encoding">shannon fano encoding</a>
-            </li>
-            <li><a href="https://github.com/AdalricP/RLE-algo">Run length Encoding</a></li>
-            <li><a href="https://github.com/AdalricP/shunting-yard">Shunting Yard algo</a></li>
-        </ul>
-    </div>
-
-    <!-- Blog Section -->
-    <div id="blog" class="tab-content">
-        <h2>Blog</h2>
-        <p>I also write a blog</p>
-        <p><a href="/redshift">RedShift</a> - Very light Physics, math & CS theory blog on interesting topics I found.
-        </p>
-    </div>
-
-    <!-- Reading Section -->
-    <div id="reading" class="tab-content">
-        <!-- Sub-tab Navigation -->
-        <nav class="sub-tabs">
-            <button class="sub-tab-btn active" onclick="openSubTab('recommendations')">Recommendations</button>
-            <button class="sub-tab-btn" onclick="openSubTab('read-list')">Read List</button>
-            <button class="sub-tab-btn" onclick="openSubTab('technical-reads')">Technical Reads</button>
-        </nav>
-
-        <!-- Recommendations Sub-tab -->
-        <div id="recommendations" class="sub-tab-content active">
-            <h2>Reading</h2>
-            <p>I love to read, and I read a crap ton. Here's a list of things that I liked,</p>
-            <ol>
-                <li>The Nvidia Way: Jensen Huang and the Making of a Tech Giant by Tae Kim. - This is by far my
-                    favourite book.
-                </li>
-                <li>How To Be Succesful - Sam Altman</li>
-                <li>How to be More Agentic - Cate Hall - Not a book - but this is my most impactful read till now.</li>
-                <li>Zero To One by Peter Theil</li>
-                <li>The Goal By Elinyahu M. Goldrat</li>
-                <li>The autobiography of Andrew Carnegie</li>
-                <li>The Mind Of Napolean by J. Christopher Herald</li>
-                <li>The PMARCA's Guide To Career Planning</li>
-            </ol>
-
-            <h3>What I'm Currently Reading:</h3>
-            <ul>
-                <li>Mythos: The greek myths retold - Stephen Fry</li>
-                <li>The Art Of Doing Science & Engineering - Richard Hammings</li>
-            </ul>
-        </div>
-
-        <!-- Read List Sub-tab -->
-        <div id="read-list" class="sub-tab-content">
-            <h2>Read List</h2>
-            <p>Check out my full reading list here:</p>
-            <p><a href="#">Link to Excel Sheet (Coming Soon)</a></p>
-        </div>
-
-        <!-- Technical Reads Sub-tab -->
-        <div id="technical-reads" class="sub-tab-content">
-            <h2>Technical Reads</h2>
-            <p>Technical recommendations will be added here.</p>
-        </div>
-    </div>
-
-    <script>
-        function openTab(tabName) {
-            // Hide all tab contents
-            const contents = document.querySelectorAll('.tab-content');
-            contents.forEach(content => content.classList.remove('active'));
-
-            // Remove active class from all buttons
-            const buttons = document.querySelectorAll('.tab-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-
-            // Show the specific tab content
-            document.getElementById(tabName).classList.add('active');
-
-            // Add active class to the button that opened the tab
-            // We need to find the button that calls this function with this tabName
-            // A simpler way is to pass 'event' or use event delegation, but for simplicity:
-            const activeBtn = Array.from(buttons).find(btn => btn.getAttribute('onclick').includes(tabName));
-            if (activeBtn) activeBtn.classList.add('active');
-        }
-
-        function openSubTab(subTabName) {
-            // Hide all sub-tab contents
-            const contents = document.querySelectorAll('.sub-tab-content');
-            contents.forEach(content => content.classList.remove('active'));
-
-            // Remove active class from all sub-tab buttons
-            const buttons = document.querySelectorAll('.sub-tab-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-
-            // Show the specific sub-tab content
-            document.getElementById(subTabName).classList.add('active');
-
-            // Add active class to the button that opened the sub-tab
-            const activeBtn = Array.from(buttons).find(btn => btn.getAttribute('onclick').includes(subTabName));
-            if (activeBtn) activeBtn.classList.add('active');
-        }
-    </script>
-
+        <p>Coming soon...</p>
+      </div>
+      <div class="sub-tab-panel" id="papers" data-parent="work">
+        <h2>Papers</h2>
+        <p>TODO: Nothing for now... :(</p>
+      </div>
+    </section>
+    </main>
+  </div>
 </body>
-
 </html>

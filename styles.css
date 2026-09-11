@@ -1,0 +1,67 @@
+:root { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 17px; line-height: 1.65; color: #222; background: #fff; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; padding: 56px 24px 80px; }
+.site-shell { position: relative; z-index: 1; width: min(100%, 1060px); margin: 0 auto; display: grid; grid-template-columns: 180px minmax(0, 720px); gap: clamp(48px, 8vw, 100px); justify-content: center; align-items: start; }
+.sidebar { position: fixed; top: 50vh; left: max(24px, calc(50% - 530px)); width: 180px; transform: translateY(-50%); }
+.section-menu { display: flex; flex-direction: column; align-items: stretch; gap: 0; border-left: 1px solid #777; }
+.menu-button, .sub-menu-button { position: relative; appearance: none; border: 0; padding: .28rem 0 .28rem 1rem; background: none; color: #68758a; font: inherit; font-size: 1rem; line-height: 1.65; cursor: pointer; text-align: left; }
+.menu-button:hover, .sub-menu-button:hover { color: #222; text-decoration: underline; }
+.sidebar-link:hover { color: #8a0303; text-decoration: underline; }
+.menu-button.is-active, .sub-menu-button.is-active { color: #222; }
+.menu-button.is-active::before, .sub-menu-button.is-active::before { content: ""; position: absolute; top: 0; bottom: 0; left: -2px; width: 3px; background: #111; }
+.reading-menu, .work-menu { display: flex; flex-direction: column; align-items: stretch; gap: 0; margin: .1rem 0 .2rem 1rem; border-left: 1px solid #bbb; }
+.sub-menu-button { padding-left: 1rem; font-size: .85rem; }
+.sidebar-heading { margin: 2.5rem 0 .6rem; font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.sidebar-link { color: #222; text-decoration: underline; text-underline-offset: 2px; }
+main { min-width: 0; grid-column: 2; grid-row: 1; }
+.page-header { display: grid; grid-template-columns: 144px minmax(0, 1fr); gap: 32px; align-items: center; margin-bottom: 2.5rem; }
+.profile-photo { width: 144px; height: 144px; object-fit: cover; border-radius: 6px; }
+h1, h2, h3 { line-height: 1.2; letter-spacing: -.025em; }
+h1 { margin: 0 0 .7rem; font-size: clamp(2.1rem, 4vw, 2.7rem); letter-spacing: -.045em; }
+h2 { margin: 1.5rem 0 .75rem; font-size: 1.3rem; }
+h3 { margin: 2rem 0 .75rem; font-size: 1.05rem; }
+.page-header p { margin: 0; color: #777; line-height: 1.55; }
+.page-header p a { color: #222; text-decoration: underline; text-underline-offset: 2px; }
+.header-links { display: block; }
+.header-links a { display: block; width: fit-content; }
+a { color: #222; text-underline-offset: 2px; }
+a:hover, .page-header p a:hover { color: #8a0303; }
+.secret-quest, .secret-quest:hover, .secret-quest:focus { color: inherit; text-decoration: none; cursor: text; outline: none; }
+h1 span { text-decoration: underline; text-decoration-color: rgba(138, 3, 3, .68); text-decoration-thickness: 2px; text-underline-offset: 6px; }
+button:focus-visible, a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; border-radius: 2px; }
+.tab-panel, .sub-tab-panel { display: none; }
+.tab-panel.is-active, .sub-tab-panel.is-active { display: block; }
+.tab-panel.is-active, .sub-tab-panel.is-active { animation: tab-enter 180ms ease-out; }
+@keyframes tab-enter { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+p, ul, ol, blockquote { margin-top: 0; margin-bottom: 1.25rem; }
+ul, ol { padding-left: 1.5rem; }
+li { margin-bottom: .45rem; }
+blockquote { margin-left: 0; padding-left: 18px; border-left: 3px solid #ddd; color: #555; }
+.about-notes { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid #ddd; color: #666; font-size: .88rem; }
+.about-notes p { margin-bottom: .75rem; }
+cite { font-style: normal; }
+.essay-list { padding: 0; list-style: none; }
+.essay-list li { margin-bottom: .65rem; }
+.essay-reader { margin-top: 2rem; }
+.essay-back { display: inline-block; margin-bottom: 2rem; }
+.essay-reader[hidden] { display: none; }
+.essay-reader h1 { margin: 0 0 .4rem; }
+.essay-reader .byline { color: #666; margin-bottom: 2.5rem; }
+.essay-reader img { max-width: 100%; height: auto; }
+.essay-reader pre { overflow: auto; padding: 1rem; background: #f5f5f5; border: 1px solid #ddd; }
+.experiment-entry h3 { margin-top: 1.75rem; }
+.experiment-image { display: block; width: min(100%, 620px); height: auto; border: 1px solid #ddd; }
+@media (max-width: 620px) {
+  body { padding: 32px 14px 60px; }
+  .site-shell { display: block; }
+  .sidebar { position: static; width: auto; margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid #ddd; transform: none; }
+  .section-menu { flex-direction: column; border-left: 1px solid #777; }
+  .reading-menu, .work-menu { flex-direction: column; margin-left: 1rem; }
+  .sidebar-heading { margin-top: 1.5rem; }
+  .page-header { grid-template-columns: 96px minmax(0, 1fr); gap: 16px; }
+  .profile-photo { width: 96px; height: 96px; border-radius: 4px; }
+  h1 { font-size: 1.9rem; }
+  .page-header p { font-size: .86rem; }
+}
+@media (prefers-reduced-motion: reduce) { .tab-panel.is-active, .sub-tab-panel.is-active { animation: none; } }

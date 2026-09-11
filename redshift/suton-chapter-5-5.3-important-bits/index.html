@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 5-5.3 - Monte Carlo Methods, Monte Carlo Control ES</title><base href="https://arypa.in/redshift/suton-chapter-5-5.3-important-bits/">
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            /* Default (Night) */
+            --bg-color: #000000;
+            /* Pure Black */
+            --text-color: #dcddde;
+            --accent-color: #ff3333;
+            /* Redshift Red */
+            --link-color: #ff3333;
+            --code-bg: #111111;
+            /* Slightly lighter than black */
+            --quote-border: #ff3333;
+            --font-main: "Space Mono", monospace;
+        }
+
+        /* Read Mode (Warm/Flux-like) */
+        [data-theme="read"] {
+            --bg-color: #1a1816;
+            --text-color: #d6c4a8;
+            /* Warm sepia text */
+            --accent-color: #ff5555;
+            /* Warmer red/orange */
+            --link-color: #ff5555;
+            --code-bg: #2b2724;
+            --quote-border: #ff5555;
+        }
+
+        /* Day Mode (White) */
+        [data-theme="day"] {
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --accent-color: #cc0000;
+            /* Darker red for contrast */
+            --link-color: #cc0000;
+            --code-bg: #f5f5f5;
+            --quote-border: #cc0000;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+            font-size: 16px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Typography */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: inherit;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        [data-theme="day"] h1,
+        [data-theme="day"] h2 {
+            color: #000;
+        }
+
+        h1 {
+            border-bottom: 1px solid var(--code-bg);
+            padding-bottom: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Links */
+        a {
+            color: var(--link-color);
+            text-decoration: underline;
+            font-family: "Space Mono", monospace;
+            transition: opacity 0.2s, letter-spacing 0.2s;
+        }
+
+        a:hover {
+            opacity: 0.8;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+
+        /* Bold & Italic */
+        strong {
+            color: inherit;
+            font-weight: 900;
+        }
+
+        em {
+            color: var(--accent-color);
+            font-style: italic;
+        }
+
+        /* Bold + Italic */
+        strong em,
+        em strong {
+            color: var(--accent-color);
+            font-weight: 900;
+            font-style: italic;
+        }
+
+        /* Images */
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 2rem auto;
+            border-radius: 4px;
+        }
+
+        /* Code Blocks */
+        pre {
+            background-color: var(--code-bg);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            border: 1px solid #333;
+        }
+
+        code {
+            font-family: var(--font-main);
+            background-color: rgba(128, 128, 128, 0.1);
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        /* Blockquotes */
+        blockquote {
+            border-left: 4px solid var(--quote-border);
+            margin: 1.5rem 0;
+            padding-left: 1rem;
+            color: inherit;
+            opacity: 0.8;
+            font-style: italic;
+        }
+
+        /* Lists */
+        ul,
+        ol {
+            padding-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Navigation */
+        .nav {
+            margin-bottom: 3rem;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav a {
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .nav a:hover {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+
+        /* Theme Switcher */
+        .theme-switcher {
+            display: flex;
+            gap: 1rem;
+            font-size: 1.2rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .theme-btn {
+            opacity: 0.5;
+            transition: opacity 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .theme-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .theme-btn.active {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        /* Hide raw markdown */
+        #markdown-content {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="nav">
+        <a href="../index.html">~/back-to-menu</a>
+        <div class="theme-switcher">
+            <span class="theme-btn active" onclick="setTheme('night')" title="Night Mode">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </span>
+            <span class="theme-btn" onclick="setTheme('read')" title="Read Mode (Warm)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+            </span>
+            <span class="theme-btn" onclick="setTheme('day')" title="Day Mode">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </span>
+        </div>
+    </div>
+    <div id="content"></div>
+
+    <!-- PASTE YOUR MARKDOWN HERE INSIDE THE SCRIPT TAG -->
+    <script id="markdown-content" type="text/markdown">
+**tags:** ML, CS, Agents
+
+# Sutton, Barto Chapter 5.3 - Monte Carlo Methods, the important bits.
+
+**Other methods require complete knowledge of the environment.** *Monte-carlo requires only the experience.*
+
+Monte-carlo methods are a way of solving the RL problem based on *averaging* sample returns. For the sake of having well-defined returns, well only look at episodic tasks right now.
+
+Basically, we're assuming that the experience is divided into *episodes* and all episodes eventually terminate **regardless** of action.
+
+Monte-Carlo is more generally used for any estimation where randomness is used.
+
+Monte-Carlo methods sample and average *returns* for each *state-action pair*, and average *rewards* for each action. Main difference is now there are multiple states and are interlinked. Return after taking action in one state depends on action taken in a later state.
+
+> What if you take a bad action, but then a good one? A good return is assigned to the bad action! :(
+
+This is non-stationarity, to handle this we'll use what is known as a *General Policy Iteration.*
+
+---
+
+## Generalized Policy Iteration
+
+Refers to the idea of letting policy-evaluation and policy-improvement processes interact. Essentially all of RL can be seen as two functions, once which evaluates the policy, and the other which improves using those evaluations.
+
+![[Screenshot 2026-02-09 at 6.03.48 AM.png]]
+
+The two functions can also be seen to compete/collaborate.
+Compete --> Pull in opposing directions
+Collaborate --> eventually reach the optimal value function and optimal policy.
+
+![[Screenshot 2026-02-09 at 6.05.03 AM.png]]
+
+---
+
+## 5.1 Monte Carlo Prediction
+
+> Looking at monte-carlo methods for learning state value functions of a given policy, first.
+
+Value of a state is the expected return $-$ expected, cumulative, future, discounted reward $-$ starting from state.
+
+Obvious way to do this is by averaging the returns for the estimation. This idea underlies *all* monte-carlo methods.
+
+In particular, suppose we wish to estimate $v_\pi(s)$ given set of episodes obtained by following $\pi$ and passing thru $s$. Each occurence of $s$ in an episode is a *visit* of $s$.
+
+$s$ may be visited multiple times in the same episode. The first-visit MC method estimates $v_\pi(s)$ as the average of returns following first visits to $s$ whereas every-visit MC averages returns following *all* visits to $s$.
+
+We'll focus on first-visit. Every-visit although extends more naturally to function approximation and eligibility traces.
+
+### Algorithm for first-visit MC prediction for estimating $V\approx v_\pi$
+
+![[Screenshot 2026-02-09 at 6.14.42 AM.png]]
+
+Both first-visit and every-visit converge to $v_\pi(s)$ as the number of visits to $s$ goes to $\infty$. Easy to see for first-visit, by law of large numbers, sequence of averages of these estimates converges to their expected value. Each average is itself an unbiased estimate, standard deviation of its error falls as $1/\sqrt n$, where $n$ is number of returns.
+
+Every-visit is less-straight forward but it also converges *quadratically* to $v_\pi(s)$.
+
+---
+
+### Generalising the idea of backup diagrams to monte-carlo algorithms
+
+![[Screenshot 2026-02-09 at 6.38.55 AM.png]]
+
+![[Screenshot 2026-02-09 at 6.39.31 AM.png]]
+
+How do we generalise this idea to monte carlo algorithms. General idea is to show at top the root node to be updated and to show below all transitions and leaf nodes whose rewards and estimated values contribute to update. For monte carlo estimation of $v_\pi$ root is state node, below it, the entire trajectory of transitions along a particular single episode, ending at the terminal state.
+
+![[Screenshot 2026-02-09 at 6.41.01 AM.png]]
+
+An important fact about monte-carlo methods is that estimates for each state are *independent*. (!!)
+
+The estimate for one state does not build upon etimate of any other state. Monte carlo methods do not *bootstrap.*
+
+> Bootstrap = using current estimates of other states to update a states value. (Eg. DP/Temporal Difference), pure monte carlo does *not* bootstrap.
+
+Computational expense of estimating value of single state is independent of the number of states. This makes monte carlo methods attractive when one requires value of only one or subset of states.
+
+---
+
+## 5.2 Monte Carlo Estimation of Action Values
+
+If a model is not available then it is useful to estimate *action* values, rather than *state* values. With a model, state values are sufficient to determine policy, one looks one step ahead, and chooses whichever action leads to best combination of reward and next state.
+
+Without model, state values alone are not sufficient, we must explicitly estimate the value of each action in order for the values to be useful in suggesting a policy.
+
+Therefore, a primary goal for monte carlo methods is to estimate $q^*$. To achieve this, we first consider policy eval. problem for action values.
+
+The policy evaluation problem for action values refers to estimating $q_\pi(s, a)$, the expected return.
+
+Monte Carlo methods remain essentially the same, except now we're talking about visits to state-action pairs rather than just the state $s$.
+
+> A state action pair $s, a$ is visited in an episode if we ever visit state $s$ and take action $a$. Obviously.
+
+Every-visit MC method estimates value of state-action pair as average of returns that have followed all the visits to it.. First visit averages returns following the first time in each episode that the state was visited and action was selected.
+
+Complication is many state-action pairs may *never* be visited. If $\pi$ is deterministic, then in following $\pi$ we'll observe returns only for one of the actions from each state.
+
+With no returns to average, monte-carlo estimates of other actions will not improve with experience. Serious problem because the purpose of learning actual values is to help in choosing among the actions available in each state.
+
+> exploration vs. exploitation parameters baby
+
+This is the general problem of *maintaining exploration.* For policy evaluation to work for action values, we must ensure continuous exploration. One way to do this is by that the episodes start *in a state-action pair* and every pair has non-zero probability of being selected as the start. Guarantees all state-action pairs will be visited an infinite number of times in the limit of infinite number of episodes.
+
+This is the *assumption of exploring starts.*
+
+This is sometimes useful, but not always, eg. when we want to learn from actual interaction with the environment.
+
+In that case starting conditions are unlikely to be so helpful.
+
+Another alternative is to use stochastic policies with non-zero probability of selecting all actions in each state.
+
+For now, let's continue with the assumption of exploring starts and look into the Full Monte Carlo Control Method.
+
+---
+
+## 5.3 Monte Carlo Control
+
+We now try to use monte carlo estimation in control, that is, to approximate optimal policies The overall idea is to proceed according to the idea of the [[#Generalized Policy Iteration|GPI]]. In GPI we maintain both an approximate policy and an approximate value function, value function is repeatedly altered to more closely approximate the value function for the current policy, and alter the policy wrt the current value function.
+
+The two changes work against each other, as each creates a moving target for the other, kind of like an adversarial network.
+
+![[Screenshot 2026-02-09 at 7.24.32 AM.png]]
+
+Let's consider a monte-carlo version of a classical policy iteration.
+
+We perform alternating complete steps of policy evaluation and improvement.
+
+![[Screenshot 2026-02-09 at 7.30.11 AM.png]]
+
+Many episodes are experienced over here, with the approximate action-value function approaching the true function asymptotically.
+
+Assuming we observe infinite episodes, the episodes are generated with exploring start. Under these assumptions, monte carlo method will compute *each* $q_{\pi_k}$ *for arbitrary* $\pi_k$.
+
+We improve the policy by making the policy *greedy* w.r.t. current value function, no model is needed to construct greedy policy, for we have an action-value function.
+
+For any action-value function $q$, corresponding greedy policy is the one that $s\in\mathcal S$ deterministically chooses an action with maximal action value.
+
+$$\pi(s)=\arg\max_{a}q(s, a)$$
+
+We can do policy improvement by constructing each $\pi_{k+1}$ as a greedy policy w.r.t. $q_{\pi_k}$.
+
+The policy improvement theorem (check: section4.2 in sutto, barto) applies to $\pi_k$ and $\pi_{k+1}$ because for all $s\in\mathcal S$,
+
+![[Screenshot 2026-02-09 at 7.36.42 AM.png]]
+
+This theorem assures that each $\pi_{k+1}$ is uniformly *better* than $\pi_k$ or just as good. In which case they are both optimal policies.
+
+This in turn assures us that the overall process *must converge* to optimal policy and optimal value function.
+
+This is why we can use monte carlo methods to find optimal policies given only sample episodes.
+
+Okay, so we still have two major assumptions.
+1. Exploring starts
+2. Policy evaluation done with infinite number of episodes.
+We have to get rid of both of them.
+
+The second assumption is pretty easy to remove, so let's focus on that.
+What we focus on is, we *give up* trying to complete the policy evaluation before returning to policy improvement.
+
+On each evaluation step we only move *towards* $q_{\pi_k}$ but never expect to actually get any close, except over many many steps.
+
+One extreme form of this idea is known as **value iteration** in which **only one iteration** of iterative policy evaluation is performed between each step of policy improvement. The in-place version is even more extreme, where we alternate between policy evaluation and improvement *every step.*
+
+For Monte-Carlo policy evaluation, it's natural to alternate between evaluation and improvement on an episode-by-episode basis. After each episode, observed returns are used for policy evaluation, then the policy is improved at all the states visited in the episode, and then the policy is improved at all states visited in the episode.
+
+A simple algorithm for this is *Monte Carlo ES*.
+
+![[Screenshot 2026-02-13 at 9.40.00 AM.png]]
+
+---
+
+## 5.4 - I might add in later?
+
+---
+    </script>
+
+    <script>
+        const markdown = document.getElementById('markdown-content').textContent;
+
+        // Protect LaTeX from marked.js
+        // We replace $$...$$ and $...$ with placeholders
+        const mathExpressions = [];
+        let protectedMarkdown = markdown.replace(/\$\$([\s\S]*?)\$\$|\$((?:\\.|[^$])*)\$/g, (match) => {
+            mathExpressions.push(match);
+            return `MATH_EXPRESSION_${mathExpressions.length - 1}`;
+        });
+
+        // Handle Obsidian-style image links ![[path]] -> ![filename](../media/filename)
+        protectedMarkdown = protectedMarkdown.replace(/!\[\[(.*?)\]\]/g, (match, path) => {
+            const filename = path.split('/').pop();
+            const encodedFilename = encodeURIComponent(filename);
+            return `![${filename}](../media/${encodedFilename})`;
+        });
+
+        // Parse Markdown
+        const html = marked.parse(protectedMarkdown);
+
+        // Restore LaTeX
+        const finalHtml = html.replace(/MATH_EXPRESSION_(\d+)/g, (match, index) => {
+            return mathExpressions[index];
+        });
+
+        document.getElementById('content').innerHTML = finalHtml;
+
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise();
+        }
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+
+            // Update active button
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('onclick').includes(theme)) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Save preference
+            localStorage.setItem('redshift-theme', theme);
+        }
+
+        // Load preference
+        const savedTheme = localStorage.getItem('redshift-theme') || 'night';
+        setTheme(savedTheme);
+    </script>
+</body>
+
+</html>
