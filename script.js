@@ -6,7 +6,7 @@ const essayLinks = [...document.querySelectorAll("[data-essay]")];
 const essayList = document.querySelector(".essay-list");
 const essayReader = document.querySelector("#essay-reader");
 
-const activeSubtabs = { reading: "recommendations", work: "work-main" };
+const activeSubtabs = { reading: "recommendations" };
 
 function activateTab(target) {
   tabButtons.forEach((button) => {
@@ -78,8 +78,6 @@ async function showEssay(slug) {
 tabButtons.forEach((button) => button.addEventListener("click", () => {
   if (button.dataset.tab === "reading") {
     activateSubtab("reading", "recommendations");
-  } else if (button.dataset.tab === "work") {
-    activateSubtab("work", "work-main");
   } else {
     activateTab(button.dataset.tab);
   }
