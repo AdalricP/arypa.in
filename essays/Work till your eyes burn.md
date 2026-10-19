@@ -2,9 +2,9 @@
 tags:
   - TODO
 ---
-You're talented, relentlessly resourceful, and have the things necessary to achieve whatever you want. Now the goal is to work hard, you've been inflicted with the curse of ambition, you want to achieve some extremely big things. Bigger things than anyone else ever has.
+You're talented, relentlessly resourceful, and have the things necessary to achieve whatever you want. Now the goal is to work hard, you've been inflicted with the curse of ambition, you want to achieve some extremely big things.
 
-You're going to have to work extremely hard, long hours. The greatest minds have worked every. waking. hour. No matter how smart you claim to be, do you really expect to beat the greatest our civilisation has ever seen while lazing off? Obviously not. You need to work really fucking hard. It's a sacrifice you're going to have to make if you really want the things you claim to want.
+You're going to have to work extremely hard, long hours. The greatest minds have worked every. waking. hour. You need to work really fucking hard. It's a sacrifice you're going to have to make if you really want the things you claim to want.
 
 ![[Pasted image 20260911192346.png]]
 

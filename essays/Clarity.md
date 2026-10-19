@@ -18,7 +18,6 @@ You travelled back in time, it's 2013, bitcoin is just about to blow up. You kno
 
 Bill Ackman doesn't have a time machine, yet he goes all in anyways, and yes, it means he sometimes loses. But that's okay. If you have clarity, if you know exactly what *you're* thinking, then it makes no sense to not put everything on the bet. 
 
-I have a very simple idea, it's not very unique either. Robot deployment in the next 10 years will be massive. A million times what it is right now. We're going to see 90% automation in nearly every country. The best right now is 66%. It's bound to be a multi-trillion $ opportunity, yes, with a lot of people. Which means I'm not doing physics research anymore, which I've been doing since I was eleven.
 
 If the river is clear, well jump right in!
 
