@@ -9,7 +9,7 @@
     <link rel="apple-touch-icon" href="./icon-192.png" />
     <meta name="theme-color" content="#f3f2ee" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <script type="module" crossorigin src="./assets/index-X4qZzCJt.js"></script>
+    <script type="module" crossorigin src="./assets/index-C2qoQgFc.js"></script>
   </head>
   <body>
     <header data-tauri-drag-region>
@@ -45,6 +45,12 @@
           <div class="line"><span>pins</span><div id="rope-swatches"></div></div>
           <div class="line"><button id="helper-link" class="link-btn"><span>helper</span><i class="helper-dot" hidden></i></button><label class="switch"><input type="checkbox" id="s-helper" /><i></i></label></div>
           <div class="line" data-flag="spotify_login"><button id="spotify-link" class="link-btn live"><span>spotify search</span></button><span id="spotify-mini" class="spotify-mini"></span></div>
+          <button id="history-link" class="history-link">early alpha · what's new</button>
+        </div>
+
+        <div class="page" id="page-history" hidden>
+          <div class="sheet-head split"><button class="icon" data-back aria-label="back"></button><button class="icon" data-close aria-label="done"></button></div>
+          <div id="history-body" class="history-body"></div>
         </div>
 
         <div class="page" id="page-spotify" hidden>
