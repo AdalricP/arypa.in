@@ -41,8 +41,6 @@ blockquote { margin-left: 0; padding-left: 18px; border-left: 3px solid #ddd; co
 .about-notes { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid #ddd; color: #666; font-size: .88rem; }
 .about-notes p { margin-bottom: .75rem; }
 cite { font-style: normal; }
-.copy-prompt { appearance: none; border: 0; padding: 0; background: none; color: #222; font: inherit; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
-.copy-prompt:hover { color: #8a0303; }
 .essay-list { padding: 0; list-style: none; }
 .essay-list li { margin-bottom: .65rem; }
 .essay-reader { margin-top: 2rem; }
