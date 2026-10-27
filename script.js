@@ -101,3 +101,40 @@ document.querySelectorAll(".secret-quest").forEach((link) => link.addEventListen
   link.dataset.armed = "true";
   window.setTimeout(() => delete link.dataset.armed, 1500);
 }));
+
+const setupPrompt = `Set up the "Save to Site" browser extension from https://github.com/AdalricP/save-to-site for my website.
+
+1. Look at how my site is built and where a list of articles would fit.
+2. Create articles.json at a path my site serves publicly: a JSON array of
+   { "title", "url", "added" (YYYY-MM-DD), "note" (optional) }, newest first.
+3. Add an "Articles I found useful" section that fetches that file and renders it
+   as a simple list, matching my site's existing style. If my site is built from
+   source, make sure the JSON is either served as-is or read at build time.
+4. Download the extension folder from that repo and fill in extension/defaults.js
+   with my GitHub owner, repo, branch and the file path.
+5. Tell me the two things I still have to do myself: make a fine-grained GitHub token
+   (only this repo, Contents: read and write) and load the extension in my browser.`;
+
+document.querySelector(".copy-prompt")?.addEventListener("click", async (event) => {
+  await navigator.clipboard.writeText(setupPrompt);
+  event.target.textContent = "copied";
+  window.setTimeout(() => (event.target.textContent = "copy a setup prompt"), 1500);
+});
+
+fetch("articles.json", { cache: "no-cache" })
+  .then((response) => response.json())
+  .then((articles) => {
+    const list = document.querySelector("#article-list");
+    articles.forEach((article) => {
+      const item = document.createElement("li");
+      const link = document.createElement("a");
+      link.href = article.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = article.title;
+      item.append(link);
+      if (article.note) item.append(` — ${article.note}`);
+      list.append(item);
+    });
+  })
+  .catch(() => {});
