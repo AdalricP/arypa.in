@@ -1,407 +1,394 @@
-// Huffman Node
-class Node {
-    constructor(char, freq, left = null, right = null) {
-        this.char = char;
-        this.freq = freq;
-        this.left = left;
-        this.right = right;
-    }
+const svg_namespace = 'http://www.w3.org/2000/svg';
+const horizontal_gap_between_leaves_in_pixels = 34;
+const vertical_gap_between_levels_in_pixels = 54;
+const drawing_margin_in_pixels = 18;
+const leaf_radius_in_pixels = 13;
+const branch_radius_in_pixels = 9;
+const edge_label_sideways_offset_in_pixels = 7;
+const rebuild_delay_after_typing_in_milliseconds = 120;
+const slowest_step_duration_in_milliseconds = 480;
+const bits_per_uncompressed_character = 8;
+const blip_frequency_in_hertz_by_bit = { 0: 520, 1: 780 };
+const blip_duration_in_seconds = 0.05;
+const visible_label_by_invisible_character = new Map([[' ', '␣'], ['\n', '↵'], ['\t', '⇥']]);
 
+const page_elements = {
+    input_text: document.getElementById('input_text'),
+    compression_summary: document.getElementById('compression_summary'),
+    tree_drawing: document.getElementById('tree_drawing'),
+    play_button: document.getElementById('play_button'),
+    speed_slider: document.getElementById('speed_slider'),
+    sound_toggle: document.getElementById('sound_toggle'),
+    encoded_bitstream: document.getElementById('encoded_bitstream'),
+    code_table_body: document.getElementById('code_table_body'),
+};
+
+const page_state = {
+    current_encoding: null,
+    tree_elements_by_path: new Map(),
+    bit_group_elements: [],
+    playback_steps: [],
+    playback_step_index: 0,
+    is_playing: false,
+    playback_timer_id: null,
+    rebuild_timer_id: null,
+    audio_context: null,
+};
+
+function count_character_frequencies(text_characters) {
+    const frequency_by_character = new Map();
+    for (const character of text_characters) {
+        frequency_by_character.set(character, (frequency_by_character.get(character) || 0) + 1);
+    }
+    return frequency_by_character;
 }
 
-// Build frequency map
-function buildFrequencyMap(text) {
-    const freq = {};
-    for (const char of text) {
-        freq[char] = (freq[char] || 0) + 1;
-    }
-    return freq;
+function compare_nodes_by_frequency_then_creation_order(first_node, second_node) {
+    const ordering = first_node.frequency - second_node.frequency || first_node.creation_order - second_node.creation_order;
+    return ordering;
 }
 
-// Build Huffman Tree
-function buildHuffmanTree(freqMap) {
-    const nodes = Object.entries(freqMap).map(([char, freq]) => new Node(char, freq));
-    while (nodes.length > 1) {
-        nodes.sort((a, b) => a.freq - b.freq);
-        const left = nodes.shift();
-        const right = nodes.shift();
-        nodes.push(new Node(null, left.freq + right.freq, left, right));
-    }
-    return nodes[0];
+function create_leaf_node([character, frequency], creation_order) {
+    const leaf_node = { character, frequency, creation_order, left: null, right: null };
+    return leaf_node;
 }
 
-// Build codes from tree
-function buildCodes(node, prefix = '', codes = {}) {
-    if (!node.left && !node.right) {
-        codes[node.char] = prefix;
-    } else {
-        if (node.left) buildCodes(node.left, prefix + '0', codes);
-        if (node.right) buildCodes(node.right, prefix + '1', codes);
+function build_huffman_tree(frequency_by_character) {
+    const waiting_nodes = [...frequency_by_character].map(create_leaf_node);
+    let next_creation_order = waiting_nodes.length;
+
+    while (waiting_nodes.length > 1) {
+        waiting_nodes.sort(compare_nodes_by_frequency_then_creation_order);
+        const left = waiting_nodes.shift();
+        const right = waiting_nodes.shift();
+        waiting_nodes.push({ character: null, frequency: left.frequency + right.frequency, creation_order: next_creation_order++, left, right });
     }
-    return codes;
+
+    const root_node = waiting_nodes[0];
+    return root_node;
 }
 
-// Draw Huffman tree as SVG (with improved visuals)
-function drawTree(node, svg, x, y, dx, depth = 0, parent = null, path = '', circleRadius = 22) {
-    if (!node) return;
-    const nodeId = 'node-' + Math.random().toString(36).substr(2, 9);
-    // Calculate size reduction for this depth - make it more gradual
-    const sizeReduction = Math.max(0.25, 1 - (depth * 0.15));  // Slower reduction, higher minimum
-    
-    // Spacing decreases with depth - more aggressive horizontal reduction
-    const nextDx = (dx * Math.pow(0.6, depth));  // Exponential reduction for horizontal spacing
-    const verticalSpacing = Math.max(40, 85 * sizeReduction); // Increased minimum spacing
-    const nextY = y + verticalSpacing;
-    const nextRadius = circleRadius * sizeReduction;
-    
-    if (node.left) drawTree(node.left, svg, x - nextDx, nextY, nextDx, depth + 1, { x, y }, path + '0', nextRadius);
-    if (node.right) drawTree(node.right, svg, x + nextDx, nextY, nextDx, depth + 1, { x, y }, path + '1', nextRadius);
-    // Draw curved path to parent (after children, so lines are behind)
-    if (parent) {
-        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        // Create a smooth curve between parent and child with rounder ends
-        const midY = (parent.y + y) / 2;
-        const curveStrength = 0.8; // Increased curve strength for rounder lines
-        const d = `M ${parent.x} ${parent.y} 
-                  C ${parent.x} ${parent.y + (y - parent.y) * curveStrength},
-                    ${x} ${parent.y + (y - parent.y) * (1 - curveStrength)},
-                    ${x} ${y}`;
-        path.setAttribute('d', d);
-        path.setAttribute('stroke', '#2c3e50');
-        path.setAttribute('stroke-width', Math.max(0.5, 2 - (depth * 0.4)));
-        path.setAttribute('stroke-linecap', 'round'); // Round line ends
-        path.setAttribute('fill', 'none');
-        path.setAttribute('opacity', Math.max(0.1, Math.pow(0.7, depth))); // Exponential fade
-        svg.appendChild(path);
-    }
+function collect_leaf_paths(node, path_from_root) {
+    if (!node.left) return [[node.character, path_from_root]];
 
-    // Draw node (circle)
-    if (depth <= 6) {  // Allow nodes to go one level deeper
-        const sizeReduction = Math.max(0.25, 1 - (depth * 0.15));  // More gradual reduction
-        const currentRadius = circleRadius * sizeReduction;
-        const fontSize = Math.max(6, currentRadius * 0.9);  // Font size proportional to node size
-        
-        // Only draw node and text if they're not too small to be visible
-        if (currentRadius > 1) {
-            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            circle.setAttribute('cx', x);
-            circle.setAttribute('cy', y);
-            circle.setAttribute('r', currentRadius);
-            circle.setAttribute('fill', '#fff');
-            circle.setAttribute('stroke', '#2c3e50');
-            circle.setAttribute('stroke-width', Math.max(0.5, 2 * sizeReduction));
-            circle.setAttribute('id', nodeId);
-            circle.setAttribute('opacity', Math.max(0.1, Math.pow(0.75, depth))); // Sharper fade
-            svg.appendChild(circle);
-            
-            // Show text for nodes up to depth 4
-            if (depth <= 4) {
-                const textEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                textEl.setAttribute('x', x);
-                textEl.setAttribute('y', y + (fontSize / 3));
-                textEl.setAttribute('text-anchor', 'middle');
-                textEl.setAttribute('font-size', fontSize);
-                textEl.setAttribute('font-family', 'Satoshi, Arial, sans-serif');
-                textEl.setAttribute('font-weight', '700');
-                textEl.setAttribute('id', nodeId + '-text');
-                textEl.setAttribute('opacity', Math.max(0.1, Math.pow(0.75, depth))); // Match circle fade
-                textEl.textContent = node.char !== null ? node.char : node.freq;
-                svg.appendChild(textEl);
-            }
-        }
-    } else {
-        // For very deep nodes, keep dots more visible
-        const dotRadius = Math.max(1.5, 3 - (depth * 0.25));  // Larger minimum size, slower reduction
-        const numDots = 3;
-        const spreadX = 20;  // Slightly larger spread
-        const spreadY = 15;
-        
-        for (let i = 0; i < numDots; i++) {
-            const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            const randomOffsetX = (Math.random() - 0.5) * spreadX;
-            const randomOffsetY = (Math.random() - 0.5) * spreadY;
-            dot.setAttribute('cx', x + randomOffsetX);
-            dot.setAttribute('cy', y + randomOffsetY);
-            dot.setAttribute('r', dotRadius);
-            dot.setAttribute('fill', '#2c3e50');
-            dot.setAttribute('opacity', 0.3 + Math.random() * 0.3);
-            svg.appendChild(dot);
-        }
-    }
-    
-    node._svgId = nodeId;
-    node._svgX = x;
-    node._svgY = y;
-    node._svgRadius = circleRadius;
+    const leaf_paths = [...collect_leaf_paths(node.left, path_from_root + '0'), ...collect_leaf_paths(node.right, path_from_root + '1')];
+    return leaf_paths;
 }
 
-// Animate encoding with improved visuals
-async function animateEncoding(tree, codes, text) {
-    const svg = document.getElementById('tree-visualiser');
-    let isLooping = false;
-    let animationSpeed = 200; // Default 300 BPM for node transitions
-    
-    // Create audio elements for navigation sounds
-    const leftBeep = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU'+Array(300).join('A'));
-    const rightBoop = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU'+Array(400).join('A'));
-    leftBeep.type = 'audio/wav';
-    rightBoop.type = 'audio/wav';
-    
-    // Set different frequencies for left and right
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    function playSound(isLeft) {
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        // Left: lower pitch (400Hz), Right: higher pitch (600Hz)
-        oscillator.frequency.setValueAtTime(isLeft ? 400 : 600, audioContext.currentTime);
-        
-        // Short beep with fade out
-        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-        
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.1);
-    }
-    
-    // Helper to highlight a node with color and text color
-    function highlightNode(node, fillColor, borderColor = '#222', textColor = '#222', enlarge = false) {
-        const el = document.getElementById(node._svgId);
-        const textEl = document.getElementById(node._svgId + '-text');
-        if (el) {
-            el.setAttribute('fill', fillColor);
-            el.setAttribute('stroke', borderColor);
-            // Enlarge if highlighted (not black)
-            if (enlarge) {
-                el.setAttribute('r', node._svgRadius * 1.13);
-            } else {
-                el.setAttribute('r', node._svgRadius);
-            }
-        }
-        if (textEl) {
-            textEl.setAttribute('fill', textColor);
-        }
-    }
+function convert_leaf_path_into_code([character, path_from_root]) {
+    const character_with_code = [character, path_from_root || '0'];
+    return character_with_code;
+}
 
-    const animate = async () => {
-        if (!isLooping) {
-            // Reset everything when stopping
-            svg.querySelectorAll('circle').forEach(c => {
-                c.setAttribute('fill', '#fff');
-                c.setAttribute('stroke', '#2c3e50');
-                c.setAttribute('r', c.getAttribute('data-original-radius') || c.getAttribute('r'));
-            });
-            svg.querySelectorAll('text').forEach(t => {
-                t.setAttribute('fill', '#2c3e50');
-            });
-            document.getElementById('sequence-display').innerHTML = '';
-            return;
-        }
+function encode_text_with_huffman_tree(text) {
+    const text_characters = [...text];
+    const frequency_by_character = count_character_frequencies(text_characters);
+    const root_node = build_huffman_tree(frequency_by_character);
+    const leaf_paths = collect_leaf_paths(root_node, '');
+    const leaf_path_by_character = new Map(leaf_paths);
+    const code_by_character = new Map(leaf_paths.map(convert_leaf_path_into_code));
+    const encoded_bit_count = text_characters.reduce((running_bit_count, character) => running_bit_count + code_by_character.get(character).length, 0);
 
-        for (const char of text) {
-            if (!isLooping) return;
-            let node = tree;
-            // Highlight root: orange bg, dark border, white text, enlarged
-            highlightNode(node, '#ff9933', '#2c3e50', '#fff', true);
-            await new Promise(r => setTimeout(r, animationSpeed));
-            for (const bit of codes[char]) {
-                const isLeft = bit === '0';
-                node = isLeft ? node.left : node.right;
-                // Play corresponding sound
-                playSound(isLeft);
-                // Highlight path: orange bg, dark border, white text, enlarged
-                highlightNode(node, '#ff9933', '#2c3e50', '#fff', true);
-                await new Promise(r => setTimeout(r, animationSpeed));
-            }
-            // Reset previous node highlighting and immediately start next character
-            svg.querySelectorAll('circle').forEach(c => {
-                c.setAttribute('fill', '#fff');
-                c.setAttribute('stroke', '#2c3e50');
-                c.setAttribute('r', c.getAttribute('data-original-radius') || c.getAttribute('r'));
-            });
-            svg.querySelectorAll('text').forEach(t => {
-                t.setAttribute('fill', '#2c3e50');
-            });
+    const encoding = { text_characters, frequency_by_character, root_node, leaf_path_by_character, code_by_character, encoded_bit_count };
+    return encoding;
+}
 
-        // Add the character to the sequence display
-        const seqDisplay = document.getElementById('sequence-display');
-        const charSpan = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        charSpan.setAttribute('x', (seqDisplay.children.length * 25) + 20);  // Space characters horizontally
-        charSpan.setAttribute('y', 25);  // Position from top
-        charSpan.setAttribute('font-family', 'Satoshi, Arial, sans-serif');
-        charSpan.setAttribute('font-size', '24');
-        charSpan.setAttribute('fill', '#2c3e50');
-        charSpan.textContent = char;
-        
-        // Animate the character appearing
-        charSpan.setAttribute('opacity', '0');
-        seqDisplay.appendChild(charSpan);
-        
-        // Fade in animation
-        let opacity = 0;
-        const fadeIn = () => {
-            opacity += 0.1;
-            charSpan.setAttribute('opacity', opacity.toString());
-            if (opacity < 1) requestAnimationFrame(fadeIn);
-        };
-        fadeIn();
-    }
+function place_subtree(node, depth, path_from_root, layout_accumulator) {
+    if (!node.left) return place_leaf(node, depth, path_from_root, layout_accumulator);
+
+    const left_x_in_pixels = place_subtree(node.left, depth + 1, path_from_root + '0', layout_accumulator);
+    const right_x_in_pixels = place_subtree(node.right, depth + 1, path_from_root + '1', layout_accumulator);
+    const x_in_pixels = (left_x_in_pixels + right_x_in_pixels) / 2;
+    layout_accumulator.positioned_nodes.push({ node, depth, path_from_root, x_in_pixels });
+
+    return x_in_pixels;
+}
+
+function place_leaf(node, depth, path_from_root, layout_accumulator) {
+    const x_in_pixels = drawing_margin_in_pixels + leaf_radius_in_pixels + layout_accumulator.placed_leaf_count * horizontal_gap_between_leaves_in_pixels;
+    layout_accumulator.placed_leaf_count += 1;
+    layout_accumulator.deepest_level = Math.max(layout_accumulator.deepest_level, depth);
+    layout_accumulator.positioned_nodes.push({ node, depth, path_from_root, x_in_pixels });
+
+    return x_in_pixels;
+}
+
+function lay_out_tree(root_node) {
+    const layout_accumulator = { positioned_nodes: [], placed_leaf_count: 0, deepest_level: 0 };
+    place_subtree(root_node, 0, '', layout_accumulator);
+
+    const tree_layout = {
+        positioned_nodes: layout_accumulator.positioned_nodes,
+        width_in_pixels: 2 * (drawing_margin_in_pixels + leaf_radius_in_pixels) + (layout_accumulator.placed_leaf_count - 1) * horizontal_gap_between_leaves_in_pixels,
+        height_in_pixels: 2 * (drawing_margin_in_pixels + leaf_radius_in_pixels) + layout_accumulator.deepest_level * vertical_gap_between_levels_in_pixels,
     };
-
-    // Setup controls
-    const playBtn = document.getElementById('playLoopBtn');
-    const bpmSlider = document.getElementById('bpmSlider');
-    const bpmValue = document.getElementById('bpmValue');
-
-    playBtn.addEventListener('click', () => {
-        isLooping = !isLooping;
-        playBtn.textContent = isLooping ? 'Stop' : 'Play Loop';
-        if (isLooping) {
-            animate();
-        }
-    });
-
-    bpmSlider.addEventListener('input', (e) => {
-        const bpm = parseInt(e.target.value);
-        animationSpeed = Math.floor(60000 / bpm / 2); // Convert BPM to milliseconds
-        bpmValue.textContent = `${bpm} BPM`;
-    });
+    return tree_layout;
 }
 
-// Encode text and visualise
-function encodeText() {
-    const text = document.getElementById('text').value;
-    if (!text) {
-        document.getElementById('output').textContent = 'Please enter some text.';
-        return;
-    }
-    
-    // Clear and setup the sequence display area
-    const treeContainer = document.getElementById('tree-visualiser');
-    const existingSeqDisplay = document.getElementById('sequence-display');
-    if (existingSeqDisplay) existingSeqDisplay.remove();
-    
-    const seqDisplay = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    seqDisplay.setAttribute('id', 'sequence-display');
-    seqDisplay.setAttribute('width', treeContainer.getAttribute('width'));
-    seqDisplay.setAttribute('height', '50');
-    seqDisplay.style.marginTop = '20px';
-    seqDisplay.style.display = 'block';
-    treeContainer.parentNode.insertBefore(seqDisplay, treeContainer.nextSibling);
-    const freqMap = buildFrequencyMap(text);
-    const tree = buildHuffmanTree(freqMap);
-    const codes = buildCodes(tree);
-    const encoded = text.split('').map(char => codes[char]).join('');
-    
-    // Create a cleaner output with dropdown
-    const output = document.getElementById('output');
-    // Convert codes object to table rows
-    const codesTable = Object.entries(codes)
-        .map(([char, code]) => `
-            <tr>
-                <td style="padding: 4px 12px;">${char === ' ' ? '(space)' : char}</td>
-                <td style="padding: 4px 12px; font-family: monospace;">${code}</td>
-            </tr>
-        `).join('');
-
-    output.innerHTML = `
-        <div style="margin: 10px 0;">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                <button id="playLoopBtn" style="
-                    padding: 4px 8px;
-                    background: #e9ecef;
-                    color: #2c3e50;
-                    border: 1px solid #ced4da;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    font-family: Satoshi, Arial, sans-serif;
-                    font-size: 14px;
-                ">Play Loop</button>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <input type="range" id="bpmSlider" min="120" max="480" value="300" style="width: 100px;">
-                    <span id="bpmValue" style="font-family: Satoshi, Arial, sans-serif; font-size: 14px;">300 BPM</span>
-                </div>
-            </div>
-            <button id="showEncodingBtn" style="
-                padding: 4px 8px;
-                background: #e9ecef;
-                color: #2c3e50;
-                border: 1px solid #ced4da;
-                border-radius: 4px;
-                cursor: pointer;
-                font-family: Satoshi, Arial, sans-serif;
-                font-size: 14px;
-                transition: background 0.2s;
-            ">Details ▼</button>
-            <div id="encodingDetails" style="
-                display: none;
-                margin-top: 10px;
-                padding: 15px;
-                background: #f8f9fa;
-                border-radius: 4px;
-                font-family: Satoshi, Arial, sans-serif;
-                overflow-x: auto;
-            ">
-                <div style="margin-bottom: 12px;">
-                    <div style="font-weight: 500; margin-bottom: 4px;">Encoded:</div>
-                    <div style="font-family: monospace; word-break: break-all;">${encoded}</div>
-                </div>
-                <div>
-                    <div style="font-weight: 500; margin-bottom: 4px;">Huffman Codes:</div>
-                    <table style="border-collapse: collapse; width: 100%; max-width: 300px;">
-                        <tr style="background: #e9ecef; font-weight: 500;">
-                            <th style="padding: 4px 12px; text-align: left;">Character</th>
-                            <th style="padding: 4px 12px; text-align: left;">Code</th>
-                        </tr>
-                        ${codesTable}
-                    </table>
-                </div>
-            </div>
-        </div>
-    `;
-
-    // Add click handler for the dropdown
-    const btn = document.getElementById('showEncodingBtn');
-    const details = document.getElementById('encodingDetails');
-    btn.addEventListener('click', () => {
-        const isVisible = details.style.display === 'block';
-        details.style.display = isVisible ? 'none' : 'block';
-        btn.innerHTML = isVisible ? 'Show Encoding Details ▼' : 'Hide Encoding Details ▲';
-    });
-
-    // Calculate tree dimensions and set SVG size
-    let maxDepth = 0;
-    let maxWidth = 0;
-    function measureTree(node, depth = 0, x = 300) {
-        if (!node) return;
-        maxDepth = Math.max(maxDepth, depth);
-        maxWidth = Math.max(maxWidth, Math.abs(x - 300) * 2 + 100);
-        const sizeReduction = Math.max(0.15, 1 - (depth * 0.2));
-        const nextDx = (120 * sizeReduction) / 1.7;
-        measureTree(node.left, depth + 1, x - nextDx);
-        measureTree(node.right, depth + 1, x + nextDx);
-    }
-    measureTree(tree);
-
-    // Set SVG dimensions
-    const svg = document.getElementById('tree-visualiser');
-    let totalHeight = 0;
-    for (let d = 0; d <= maxDepth; d++) {
-        const sizeReduction = Math.max(0.15, 1 - (d * 0.2));
-        totalHeight += Math.max(30, 85 * sizeReduction);
-    }
-    // Add extra padding for the dots spread and general margins
-    const dotSpreadPadding = 40; // Account for dot spread
-    const height = totalHeight + dotSpreadPadding + 80; // Increased padding
-    const width = Math.max(600, maxWidth);
-    svg.setAttribute('width', width);
-    svg.setAttribute('height', height);
-    svg.innerHTML = '';
-    // Start drawing from the center
-    drawTree(tree, svg, width/2, 40, width/5);
-    // Animate encoding
-    animateEncoding(tree, codes, text);
+function y_in_pixels_for_depth(depth) {
+    const y_in_pixels = drawing_margin_in_pixels + leaf_radius_in_pixels + depth * vertical_gap_between_levels_in_pixels;
+    return y_in_pixels;
 }
+
+function create_svg_element(tag_name, attributes, text_content) {
+    const svg_element = document.createElementNS(svg_namespace, tag_name);
+    for (const [attribute_name, attribute_value] of Object.entries(attributes)) svg_element.setAttribute(attribute_name, attribute_value);
+    if (text_content !== undefined) svg_element.textContent = text_content;
+    return svg_element;
+}
+
+function label_for_character(character) {
+    const visible_label = visible_label_by_invisible_character.get(character) ?? character;
+    return visible_label;
+}
+
+function draw_edge(child_position, parent_position) {
+    const bit = child_position.path_from_root.at(-1);
+    const child_y_in_pixels = y_in_pixels_for_depth(child_position.depth);
+    const parent_y_in_pixels = y_in_pixels_for_depth(parent_position.depth);
+    const label_x_in_pixels = (child_position.x_in_pixels + parent_position.x_in_pixels) / 2 + (bit === '0' ? -edge_label_sideways_offset_in_pixels : edge_label_sideways_offset_in_pixels);
+    const label_y_in_pixels = (child_y_in_pixels + parent_y_in_pixels) / 2;
+
+    const edge_group = create_svg_element('g', { class: 'tree_edge' });
+    edge_group.append(
+        create_svg_element('line', { x1: parent_position.x_in_pixels, y1: parent_y_in_pixels, x2: child_position.x_in_pixels, y2: child_y_in_pixels }),
+        create_svg_element('text', { x: label_x_in_pixels, y: label_y_in_pixels }, bit),
+    );
+    return edge_group;
+}
+
+function draw_node(position, code_by_character) {
+    const is_leaf = !position.node.left;
+    const y_in_pixels = y_in_pixels_for_depth(position.depth);
+    const label = is_leaf ? label_for_character(position.node.character) : position.node.frequency;
+
+    const node_group = create_svg_element('g', { class: is_leaf ? 'tree_node is_leaf' : 'tree_node' });
+    node_group.append(
+        create_svg_element('circle', { cx: position.x_in_pixels, cy: y_in_pixels, r: is_leaf ? leaf_radius_in_pixels : branch_radius_in_pixels }),
+        create_svg_element('text', { x: position.x_in_pixels, y: y_in_pixels }, label),
+    );
+    if (is_leaf) node_group.append(create_svg_element('title', {}, `${label} · ×${position.node.frequency} · ${code_by_character.get(position.node.character)}`));
+    return node_group;
+}
+
+function render_tree(encoding) {
+    const tree_layout = lay_out_tree(encoding.root_node);
+    const position_by_path = new Map(tree_layout.positioned_nodes.map((position) => [position.path_from_root, position]));
+    const tree_elements_by_path = new Map();
+    const edge_layer = create_svg_element('g', {});
+    const node_layer = create_svg_element('g', {});
+
+    for (const position of tree_layout.positioned_nodes) {
+        const node_element = draw_node(position, encoding.code_by_character);
+        const edge_element = position.path_from_root ? draw_edge(position, position_by_path.get(position.path_from_root.slice(0, -1))) : null;
+        node_layer.append(node_element);
+        if (edge_element) edge_layer.append(edge_element);
+        tree_elements_by_path.set(position.path_from_root, { node_element, edge_element });
+    }
+
+    const tree_drawing = page_elements.tree_drawing;
+    tree_drawing.setAttribute('width', tree_layout.width_in_pixels);
+    tree_drawing.setAttribute('height', tree_layout.height_in_pixels);
+    tree_drawing.setAttribute('viewBox', `0 0 ${tree_layout.width_in_pixels} ${tree_layout.height_in_pixels}`);
+    tree_drawing.replaceChildren(edge_layer, node_layer);
+
+    return tree_elements_by_path;
+}
+
+function create_bit_group(character, character_index, code_by_character) {
+    const bit_group = document.createElement('span');
+    bit_group.className = 'bit_group';
+    bit_group.dataset.characterIndex = character_index;
+    bit_group.title = label_for_character(character);
+    for (const bit of code_by_character.get(character)) {
+        const bit_element = document.createElement('span');
+        bit_element.textContent = bit;
+        bit_group.append(bit_element);
+    }
+    return bit_group;
+}
+
+function render_bitstream(encoding) {
+    const bit_group_elements = encoding.text_characters.map((character, character_index) => create_bit_group(character, character_index, encoding.code_by_character));
+    page_elements.encoded_bitstream.replaceChildren(...bit_group_elements);
+    return bit_group_elements;
+}
+
+function compare_table_rows_by_frequency_then_code_length(first_row, second_row) {
+    const ordering = second_row.frequency - first_row.frequency || first_row.code.length - second_row.code.length || first_row.code.localeCompare(second_row.code);
+    return ordering;
+}
+
+function create_code_table_row(table_row) {
+    const row_element = document.createElement('tr');
+    row_element.dataset.character = table_row.character;
+    for (const cell_text of [label_for_character(table_row.character), table_row.frequency, table_row.code]) {
+        const cell_element = document.createElement('td');
+        cell_element.textContent = cell_text;
+        row_element.append(cell_element);
+    }
+    return row_element;
+}
+
+function render_code_table(encoding) {
+    const table_rows = [...encoding.code_by_character].map(([character, code]) => ({ character, code, frequency: encoding.frequency_by_character.get(character) }));
+    const row_elements = table_rows.sort(compare_table_rows_by_frequency_then_code_length).map(create_code_table_row);
+    page_elements.code_table_body.replaceChildren(...row_elements);
+}
+
+function render_compression_summary(encoding) {
+    const character_count = encoding.text_characters.length;
+    const uncompressed_bit_count = character_count * bits_per_uncompressed_character;
+    const percentage_of_uncompressed = Math.round((encoding.encoded_bit_count / uncompressed_bit_count) * 100);
+    const average_bits_per_character = (encoding.encoded_bit_count / character_count).toFixed(2);
+
+    page_elements.compression_summary.innerHTML = `${uncompressed_bit_count} bits at 8 per char → <strong>${encoding.encoded_bit_count} bits</strong> (${percentage_of_uncompressed}%), ${average_bits_per_character} bits per char`;
+}
+
+function clear_tree_highlight() {
+    for (const lit_element of page_elements.tree_drawing.querySelectorAll('.is_lit')) lit_element.classList.remove('is_lit');
+}
+
+function highlight_tree_path(path_from_root) {
+    clear_tree_highlight();
+    for (let prefix_length = 0; prefix_length <= path_from_root.length; prefix_length += 1) {
+        const tree_elements = page_state.tree_elements_by_path.get(path_from_root.slice(0, prefix_length));
+        tree_elements.node_element.classList.add('is_lit');
+        tree_elements.edge_element?.classList.add('is_lit');
+    }
+}
+
+function clear_bitstream_highlight() {
+    for (const highlighted_element of page_elements.encoded_bitstream.querySelectorAll('.is_current, .is_lit')) highlighted_element.classList.remove('is_current', 'is_lit');
+}
+
+function highlight_bit_group(character_index, revealed_bit_count) {
+    clear_bitstream_highlight();
+    const bit_group = page_state.bit_group_elements[character_index];
+    bit_group.classList.add('is_current');
+    [...bit_group.children].slice(0, revealed_bit_count).forEach((bit_element) => bit_element.classList.add('is_lit'));
+}
+
+function build_playback_steps(encoding) {
+    const playback_steps = encoding.text_characters.flatMap((character, character_index) => build_steps_for_one_character(character, character_index, encoding));
+    return playback_steps;
+}
+
+function build_steps_for_one_character(character, character_index, encoding) {
+    const code = encoding.code_by_character.get(character);
+    const steps_for_character = Array.from({ length: code.length + 1 }, (_, revealed_bit_count) => ({ character, character_index, revealed_bit_count, code }));
+    return steps_for_character;
+}
+
+function show_playback_step(playback_step) {
+    const leaf_path = page_state.current_encoding.leaf_path_by_character.get(playback_step.character);
+    highlight_tree_path(leaf_path.slice(0, playback_step.revealed_bit_count));
+    highlight_bit_group(playback_step.character_index, playback_step.revealed_bit_count);
+    if (playback_step.revealed_bit_count > 0) play_bit_blip(playback_step.code[playback_step.revealed_bit_count - 1]);
+}
+
+function play_bit_blip(bit) {
+    if (!page_elements.sound_toggle.checked) return;
+
+    page_state.audio_context ??= new AudioContext();
+    const audio_context = page_state.audio_context;
+    const oscillator = audio_context.createOscillator();
+    const gain = audio_context.createGain();
+    oscillator.type = 'triangle';
+    oscillator.frequency.value = blip_frequency_in_hertz_by_bit[bit];
+    gain.gain.setValueAtTime(0.08, audio_context.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audio_context.currentTime + blip_duration_in_seconds);
+    oscillator.connect(gain).connect(audio_context.destination);
+    oscillator.start();
+    oscillator.stop(audio_context.currentTime + blip_duration_in_seconds);
+}
+
+function step_duration_in_milliseconds() {
+    const step_duration = slowest_step_duration_in_milliseconds / Number(page_elements.speed_slider.value);
+    return step_duration;
+}
+
+function advance_playback() {
+    if (!page_state.is_playing) return;
+
+    show_playback_step(page_state.playback_steps[page_state.playback_step_index]);
+    page_state.playback_step_index = (page_state.playback_step_index + 1) % page_state.playback_steps.length;
+    page_state.playback_timer_id = setTimeout(advance_playback, step_duration_in_milliseconds());
+}
+
+function start_playback() {
+    if (!page_state.playback_steps.length) return;
+
+    page_state.is_playing = true;
+    page_elements.play_button.textContent = 'Stop';
+    advance_playback();
+}
+
+function stop_playback() {
+    page_state.is_playing = false;
+    clearTimeout(page_state.playback_timer_id);
+    page_elements.play_button.textContent = 'Play';
+    clear_tree_highlight();
+    clear_bitstream_highlight();
+}
+
+function clear_rendered_encoding() {
+    page_state.current_encoding = null;
+    page_state.tree_elements_by_path = new Map();
+    page_state.bit_group_elements = [];
+    page_state.playback_steps = [];
+    page_elements.tree_drawing.replaceChildren();
+    page_elements.tree_drawing.setAttribute('height', 0);
+    page_elements.encoded_bitstream.replaceChildren();
+    page_elements.code_table_body.replaceChildren();
+    page_elements.compression_summary.textContent = 'Type something above.';
+}
+
+function rebuild_from_input_text() {
+    stop_playback();
+    const text = page_elements.input_text.value;
+    if (!text) return clear_rendered_encoding();
+
+    const encoding = encode_text_with_huffman_tree(text);
+    page_state.current_encoding = encoding;
+    page_state.tree_elements_by_path = render_tree(encoding);
+    page_state.bit_group_elements = render_bitstream(encoding);
+    page_state.playback_steps = build_playback_steps(encoding);
+    page_state.playback_step_index = 0;
+    render_code_table(encoding);
+    render_compression_summary(encoding);
+}
+
+function schedule_rebuild_from_input_text() {
+    clearTimeout(page_state.rebuild_timer_id);
+    page_state.rebuild_timer_id = setTimeout(rebuild_from_input_text, rebuild_delay_after_typing_in_milliseconds);
+}
+
+function toggle_playback() {
+    if (page_state.is_playing) return stop_playback();
+    start_playback();
+}
+
+function preview_character_under_pointer(pointer_event) {
+    if (page_state.is_playing || !page_state.current_encoding) return;
+
+    const table_row = pointer_event.target.closest('tr[data-character]');
+    const bit_group = pointer_event.target.closest('.bit_group');
+    const hovered_character = table_row?.dataset.character ?? page_state.current_encoding.text_characters[bit_group?.dataset.characterIndex];
+    if (hovered_character === undefined) return clear_tree_highlight();
+
+    highlight_tree_path(page_state.current_encoding.leaf_path_by_character.get(hovered_character));
+}
+
+function clear_preview() {
+    if (!page_state.is_playing) clear_tree_highlight();
+}
+
+page_elements.input_text.addEventListener('input', schedule_rebuild_from_input_text);
+page_elements.play_button.addEventListener('click', toggle_playback);
+for (const hover_source of [page_elements.code_table_body, page_elements.encoded_bitstream]) {
+    hover_source.addEventListener('pointerover', preview_character_under_pointer);
+    hover_source.addEventListener('pointerleave', clear_preview);
+}
+
+rebuild_from_input_text();

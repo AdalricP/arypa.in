@@ -1,18 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta name="robots" content="noindex, noarchive">
+<head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Huffman Coding Visualiser</title>
+    <meta name="robots" content="noindex, noarchive">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Huffman coding</title>
     <link rel="stylesheet" href="huffman.css">
+    <script src="huffman.js" defer></script>
 </head>
 <body>
-    <textarea id="text" rows="3" cols="25"></textarea>
-    <button onclick="encodeText()">Encode</button>
-    <div id="output"></div>
-    <div id="visualiser-container">
-        <svg id="tree-visualiser" width="600" height="300"></svg>
-    </div>
-    <script src="huffman.js"></script>
+    <main>
+        <a class="back_link" href="/">← arypa.in</a>
+        <h1>Huffman coding</h1>
+        <p class="lede">Common characters get short codes, rare ones get long codes. Type anything and the tree rebuilds. Left is 0, right is 1.</p>
+
+        <textarea id="input_text" rows="2" maxlength="400" spellcheck="false" aria-label="Text to encode">she sells sea shells by the sea shore</textarea>
+        <p id="compression_summary" class="compression_summary"></p>
+
+        <div class="tree_frame">
+            <svg id="tree_drawing" role="img" aria-label="Huffman tree"></svg>
+        </div>
+
+        <div class="playback_controls">
+            <button id="play_button" type="button">Play</button>
+            <label>Speed <input id="speed_slider" type="range" min="1" max="10" value="6"></label>
+            <label><input id="sound_toggle" type="checkbox"> Sound</label>
+        </div>
+
+        <p id="encoded_bitstream" class="encoded_bitstream" aria-label="Encoded bits"></p>
+
+        <table class="code_table">
+            <thead><tr><th>Char</th><th>Count</th><th>Code</th></tr></thead>
+            <tbody id="code_table_body"></tbody>
+        </table>
+    </main>
 </body>
 </html>
