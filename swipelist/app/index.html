@@ -9,7 +9,8 @@
     <link rel="apple-touch-icon" href="./icon-192.png" />
     <meta name="theme-color" content="#f3f2ee" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <script type="module" crossorigin src="./assets/index-Dfpsrjew.js"></script>
+    <script type="module" crossorigin src="./assets/main-DmhXxfsd.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/core-BJMC8GtX.js">
   </head>
   <body>
     <header data-tauri-drag-region>
@@ -43,6 +44,9 @@
           <div class="line"><span>colour</span><div id="swatches"></div></div>
           <div class="line"><span>cards</span><div id="card-swatches"></div></div>
           <div class="line"><span>pins</span><div id="rope-swatches"></div></div>
+          <div class="line" data-desktop-only><span>quick note</span><button id="capture-shortcut" class="shortcut-chip" title="click, then press a new shortcut"></button></div>
+          <div class="line" data-desktop-only><span>start at login</span><label class="switch"><input type="checkbox" id="s-start-at-login" /><i></i></label></div>
+          <div class="line" data-desktop-only><span>daily nudge</span><label class="switch"><input type="checkbox" id="s-daily-nudge" /><i></i></label></div>
           <div class="line"><button id="helper-link" class="link-btn"><span>helper</span><i class="helper-dot" hidden></i></button><label class="switch"><input type="checkbox" id="s-helper" /><i></i></label></div>
           <div class="line" data-flag="spotify_login"><button id="spotify-link" class="link-btn live"><span>spotify search</span></button><span id="spotify-mini" class="spotify-mini"></span></div>
           <button id="history-link" class="history-link">early alpha · what's new</button>
