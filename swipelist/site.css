@@ -400,6 +400,20 @@ a.get_it_card:hover { transform: translateY(-2px); }
   justify-content: space-between;
   padding: 26px 0 40px;
   border-top: 2px dotted var(--on_paper_soft_colour);
+  align-items: center;
+}
+
+.page_footer_brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.page_footer_brand img {
+  border-radius: 4px;
+  image-rendering: pixelated;
 }
 
 .reading_column {
