@@ -122,6 +122,7 @@ fetch("articles.json", { cache: "no-cache" })
     const influences = articles.filter((article) => article.kind !== "technical");
 
     document.querySelector("#technical-list").append(...technical.map(articleItem));
+    document.querySelector("#technical-heading").hidden = technical.length === 0;
 
     const list = document.querySelector("#article-list");
     list.append(...influences.slice(0, 3).map(articleItem));
