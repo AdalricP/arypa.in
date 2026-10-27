@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta name="robots" content="noindex, noarchive"><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Influences — Aryan Pahwani</title><link rel="stylesheet" href="../essays/essay.css"><style>article{grid-column:2}@media(max-width:620px){article{grid-column:auto}}</style></head><body><div class="shell"><aside class="sidebar"><nav><a href="../">About me</a><a class="active" href="../">Readings</a><div class="nested"><a class="active" href="../">Recommendations</a><a href="../">Technical Reads</a></div><a href="../">Blogs</a><a href="../">Essays</a></nav><p class="sidebar-heading">Find me on</p><a class="contact" href="https://x.com/aryanpahwani">X/Twitter</a></aside><article><p class="back"><a href="../">← Aryan Pahwani</a></p><h1>Other stuff that has influenced me</h1>
+<ul id="article-list"></ul>
+</article></div>
+<script>
+fetch("../articles.json", { cache: "no-cache" })
+  .then((response) => response.json())
+  .then((articles) => {
+    const list = document.querySelector("#article-list");
+    articles.filter((article) => article.kind !== "technical").forEach((article) => {
+      const item = document.createElement("li");
+      const link = document.createElement("a");
+      link.href = article.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = article.title;
+      item.append(link);
+      if (article.note) item.append(` — ${article.note}`);
+      list.append(item);
+    });
+  })
+  .catch(() => {});
+</script>
+</body></html>

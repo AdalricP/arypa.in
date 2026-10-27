@@ -103,20 +103,32 @@ document.querySelectorAll(".secret-quest").forEach((link) => link.addEventListen
 }));
 
 
+function articleItem(article) {
+  const item = document.createElement("li");
+  const link = document.createElement("a");
+  link.href = article.url;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.textContent = article.title;
+  item.append(link);
+  if (article.note) item.append(` — ${article.note}`);
+  return item;
+}
+
 fetch("articles.json", { cache: "no-cache" })
   .then((response) => response.json())
   .then((articles) => {
+    const technical = articles.filter((article) => article.kind === "technical");
+    const influences = articles.filter((article) => article.kind !== "technical");
+
+    document.querySelector("#technical-list").append(...technical.map(articleItem));
+
     const list = document.querySelector("#article-list");
-    articles.forEach((article) => {
-      const item = document.createElement("li");
-      const link = document.createElement("a");
-      link.href = article.url;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.textContent = article.title;
-      item.append(link);
-      if (article.note) item.append(` — ${article.note}`);
-      list.append(item);
-    });
+    list.append(...influences.slice(0, 3).map(articleItem));
+    if (influences.length > 3) {
+      const more = document.createElement("li");
+      more.innerHTML = '<a href="influences/">more…</a>';
+      list.append(more);
+    }
   })
   .catch(() => {});
