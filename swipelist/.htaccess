@@ -10,4 +10,7 @@ AddType application/octet-stream .AppImage .deb .dmg
   <FilesMatch "\.(webp|jpg|png|woff2)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
+  <FilesMatch "\.(css|js|html)$">
+    Header set Cache-Control "public, max-age=300"
+  </FilesMatch>
 </IfModule>
