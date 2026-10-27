@@ -10,12 +10,8 @@
 </head>
 <body>
     <main>
-        <a class="back_link" href="/">← arypa.in</a>
         <h1>Huffman coding</h1>
-        <p class="lede">Common characters get short codes, rare ones get long codes. Type anything and the tree rebuilds. Left is 0, right is 1.</p>
-
         <textarea id="input_text" rows="2" maxlength="400" spellcheck="false" aria-label="Text to encode">she sells sea shells by the sea shore</textarea>
-        <p id="compression_summary" class="compression_summary"></p>
 
         <div class="tree_frame">
             <svg id="tree_drawing" role="img" aria-label="Huffman tree"></svg>
@@ -23,8 +19,7 @@
 
         <div class="playback_controls">
             <button id="play_button" type="button">Play</button>
-            <label>Speed <input id="speed_slider" type="range" min="1" max="10" value="6"></label>
-            <label><input id="sound_toggle" type="checkbox"> Sound</label>
+            <input id="speed_slider" type="range" min="1" max="10" value="6" aria-label="Speed">
         </div>
 
         <p id="encoded_bitstream" class="encoded_bitstream" aria-label="Encoded bits"></p>

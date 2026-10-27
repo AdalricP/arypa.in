@@ -7,18 +7,13 @@ const branch_radius_in_pixels = 9;
 const edge_label_sideways_offset_in_pixels = 7;
 const rebuild_delay_after_typing_in_milliseconds = 120;
 const slowest_step_duration_in_milliseconds = 480;
-const bits_per_uncompressed_character = 8;
-const blip_frequency_in_hertz_by_bit = { 0: 520, 1: 780 };
-const blip_duration_in_seconds = 0.05;
 const visible_label_by_invisible_character = new Map([[' ', '␣'], ['\n', '↵'], ['\t', '⇥']]);
 
 const page_elements = {
     input_text: document.getElementById('input_text'),
-    compression_summary: document.getElementById('compression_summary'),
     tree_drawing: document.getElementById('tree_drawing'),
     play_button: document.getElementById('play_button'),
     speed_slider: document.getElementById('speed_slider'),
-    sound_toggle: document.getElementById('sound_toggle'),
     encoded_bitstream: document.getElementById('encoded_bitstream'),
     code_table_body: document.getElementById('code_table_body'),
 };
@@ -32,7 +27,6 @@ const page_state = {
     is_playing: false,
     playback_timer_id: null,
     rebuild_timer_id: null,
-    audio_context: null,
 };
 
 function count_character_frequencies(text_characters) {
@@ -236,15 +230,6 @@ function render_code_table(encoding) {
     page_elements.code_table_body.replaceChildren(...row_elements);
 }
 
-function render_compression_summary(encoding) {
-    const character_count = encoding.text_characters.length;
-    const uncompressed_bit_count = character_count * bits_per_uncompressed_character;
-    const percentage_of_uncompressed = Math.round((encoding.encoded_bit_count / uncompressed_bit_count) * 100);
-    const average_bits_per_character = (encoding.encoded_bit_count / character_count).toFixed(2);
-
-    page_elements.compression_summary.innerHTML = `${uncompressed_bit_count} bits at 8 per char → <strong>${encoding.encoded_bit_count} bits</strong> (${percentage_of_uncompressed}%), ${average_bits_per_character} bits per char`;
-}
-
 function clear_tree_highlight() {
     for (const lit_element of page_elements.tree_drawing.querySelectorAll('.is_lit')) lit_element.classList.remove('is_lit');
 }
@@ -284,23 +269,6 @@ function show_playback_step(playback_step) {
     const leaf_path = page_state.current_encoding.leaf_path_by_character.get(playback_step.character);
     highlight_tree_path(leaf_path.slice(0, playback_step.revealed_bit_count));
     highlight_bit_group(playback_step.character_index, playback_step.revealed_bit_count);
-    if (playback_step.revealed_bit_count > 0) play_bit_blip(playback_step.code[playback_step.revealed_bit_count - 1]);
-}
-
-function play_bit_blip(bit) {
-    if (!page_elements.sound_toggle.checked) return;
-
-    page_state.audio_context ??= new AudioContext();
-    const audio_context = page_state.audio_context;
-    const oscillator = audio_context.createOscillator();
-    const gain = audio_context.createGain();
-    oscillator.type = 'triangle';
-    oscillator.frequency.value = blip_frequency_in_hertz_by_bit[bit];
-    gain.gain.setValueAtTime(0.08, audio_context.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audio_context.currentTime + blip_duration_in_seconds);
-    oscillator.connect(gain).connect(audio_context.destination);
-    oscillator.start();
-    oscillator.stop(audio_context.currentTime + blip_duration_in_seconds);
 }
 
 function step_duration_in_milliseconds() {
@@ -341,7 +309,6 @@ function clear_rendered_encoding() {
     page_elements.tree_drawing.setAttribute('height', 0);
     page_elements.encoded_bitstream.replaceChildren();
     page_elements.code_table_body.replaceChildren();
-    page_elements.compression_summary.textContent = 'Type something above.';
 }
 
 function rebuild_from_input_text() {
@@ -356,7 +323,6 @@ function rebuild_from_input_text() {
     page_state.playback_steps = build_playback_steps(encoding);
     page_state.playback_step_index = 0;
     render_code_table(encoding);
-    render_compression_summary(encoding);
 }
 
 function schedule_rebuild_from_input_text() {
