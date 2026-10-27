@@ -110,10 +110,12 @@ const setupPrompt = `Set up the "Save to Site" browser extension from https://gi
 3. Add an "Articles I found useful" section that fetches that file and renders it
    as a simple list, matching my site's existing style. If my site is built from
    source, make sure the JSON is either served as-is or read at build time.
-4. Download the extension folder from that repo and fill in extension/defaults.js
-   with my GitHub owner, repo, branch and the file path.
-5. Tell me the two things I still have to do myself: make a fine-grained GitHub token
-   (only this repo, Contents: read and write) and load the extension in my browser.`;
+4. Make sure my site deploys when that file changes on GitHub (GitHub Pages, Netlify,
+   Vercel, Cloudflare Pages, or a host that pulls from the repo all work).
+5. Tell me to install the extension from
+   https://github.com/AdalricP/save-to-site/releases/latest/download/save-to-site.zip
+   (unzip, Load unpacked in brave://extensions or chrome://extensions), click it,
+   hit Connect GitHub, and pick this repo.`;
 
 document.querySelector(".copy-prompt")?.addEventListener("click", async (event) => {
   await navigator.clipboard.writeText(setupPrompt);
