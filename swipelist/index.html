@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>swipelist</title>
+<meta name="description" content="Obsidian companion for short notes and idea dumping. Built for note dumping around ADHD and OCD.">
+<meta name="theme-color" content="#f3f2ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d2a40" media="(prefers-color-scheme: dark)">
+<meta property="og:title" content="swipelist">
+<meta property="og:description" content="Obsidian companion for short notes and idea dumping.">
+<meta property="og:image" content="app-board.jpg">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<link rel="preload" as="image" href="img/live_forever_album_art.webp" type="image/webp" fetchpriority="high">
+</head>
+<body>
+
+<div class="page_column">
+  <header class="top_bar">
+    <a class="top_bar_brand" href="#">
+      <img src="logo.png" alt="" width="28" height="28">
+      swipelist
+    </a>
+  </header>
+
+  <main>
+    <section class="hero_section">
+      <div>
+        <img class="hero_logo" src="logo.png" alt="swipelist logo: a pixel pushpin on red" width="96" height="96">
+        <h1 class="hero_title">swipelist</h1>
+        <p class="hero_line">Obsidian companion for short notes and idea dumping. Built for note dumping around ADHD &amp; OCD.</p>
+        <div class="hero_actions">
+          <a class="pressed_button" id="primary_download" href="https://swipelist-site.vercel.app/download/swipelist.dmg" download>
+            <svg class="pixel_art" width="14" height="14" viewBox="0 0 7 7" aria-hidden="true"><path fill="currentColor" d="M3 0h1v4h1V3h1v1H5v1H4v1H3V5H2V4H1V3h1v1h1z"/></svg>
+            <span>download for macOS</span>
+          </a>
+          <a class="pressed_button quiet_button" href="#get_it"><span>other downloads</span></a>
+        </div>
+      </div>
+
+      <div class="faux_board" aria-hidden="true">
+        <article class="faux_board_note faux_board_text_note">
+          <p>my goal is to become <mark>rick sanchez</mark></p>
+        </article>
+        <article class="faux_board_note faux_board_second_text_note">
+          <p>get mum the blue mug from the shop near the station before sunday</p>
+        </article>
+        <figure class="faux_board_song">
+          <div class="faux_board_note faux_board_song_note">
+            <picture><source srcset="img/live_forever_album_art.webp" type="image/webp"><img class="faux_board_song_art reveal_after_decode" src="img/live_forever_album_art.jpg" alt="" width="480" height="480" fetchpriority="high" decoding="async"></picture>
+          </div>
+          <figcaption class="faux_board_caption"><b>Live Forever</b><span>Rick and Morty, Kotomi, Ryan Elder</span></figcaption>
+        </figure>
+        <article class="faux_board_note faux_board_book_note">
+          <picture><source srcset="img/book.webp" type="image/webp"><img class="faux_board_book_cover reveal_after_decode" src="img/book.jpg" alt="" width="324" height="500" fetchpriority="high" decoding="async"></picture>
+          <div class="faux_board_book_overlay">
+            <b>The Great Gatsby</b>
+            <span>F. Scott Fitzgerald</span>
+          </div>
+        </article>
+        <svg class="faux_board_rope" viewBox="0 0 600 440" preserveAspectRatio="none">
+          <path class="faux_board_rope_path" vector-effect="non-scaling-stroke" d="M286 38 C 300 160, 440 160, 466 26"/>
+          <g shape-rendering="crispEdges" fill="var(--pin_head_colour)">
+            <rect x="279" y="30" width="14" height="8"/>
+            <rect x="459" y="18" width="14" height="8"/>
+          </g>
+          <g shape-rendering="crispEdges" fill="#3a1f1c">
+            <rect x="284" y="38" width="4" height="6"/>
+            <rect x="464" y="26" width="4" height="6"/>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <section id="how_it_feels" class="app_section" aria-label="try it">
+      <div class="app_window">
+        <div class="app_window_bar" aria-hidden="true"><i></i><i></i><i></i></div>
+        <iframe src="app/index.html" title="swipelist, running in your browser with sample notes" loading="lazy"></iframe>
+      </div>
+      <div class="app_phone" aria-hidden="true">
+        <iframe src="app/index.html" title="swipelist on a phone" loading="lazy" tabindex="-1"></iframe>
+      </div>
+    </section>
+
+    <section aria-label="what it does">
+      <div class="feature_grid">
+        <article class="feature_card new_box">
+          <svg class="pixel_art" viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M2 1h6v1H3v9h7V5h1v7H2zM9 0h1v2h2v1h-2v2H9V3H7V2h2zM4 5h4v1H4zM4 7h5v1H4zM4 9h3v1H4z"/></svg>
+          <h3>paste anything</h3>
+        </article>
+        <article class="feature_card new_box">
+          <svg class="pixel_art" viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M3 0h6v3H8v2h2v2H6v5H5V7H1V5h2V3H3z"/></svg>
+          <h3>pins &amp; rope</h3>
+        </article>
+        <article class="feature_card new_box">
+          <svg class="pixel_art" viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M3 0h6v12H3zM4 1v9h4V1zM5 10h2v1H5z"/></svg>
+          <h3>notes on your phone</h3>
+        </article>
+        <article class="feature_card new_box">
+          <svg class="pixel_art" viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M0 2h5l1 1h6v8H0zM1 4v6h10V4z"/></svg>
+          <h3>plain .md files</h3>
+        </article>
+      </div>
+    </section>
+
+    <section class="inspired_section" aria-labelledby="inspired_heading">
+      <h2 id="inspired_heading" class="section_heading">inspired by</h2>
+      <a class="x_card" href="https://x.com/thedankoe/status/2112586533610156368" target="_blank" rel="noopener">
+        <picture><source srcset="img/dankoe.webp" type="image/webp"><img class="x_card_cover reveal_after_decode" src="img/dankoe.jpg" alt="" width="720" height="288" loading="lazy" decoding="async"></picture>
+        <div class="x_card_body">
+          <svg class="pixel_art x_card_badge" viewBox="0 0 14 13" aria-label="post on X"><path fill="currentColor" d="M0 0h1v1h-1zM1 0h1v1h-1zM2 0h1v1h-1zM3 0h1v1h-1zM4 0h1v1h-1zM12 0h1v1h-1zM13 0h1v1h-1zM1 1h1v1h-1zM5 1h1v1h-1zM11 1h1v1h-1zM12 1h1v1h-1zM2 2h1v1h-1zM5 2h1v1h-1zM10 2h1v1h-1zM11 2h1v1h-1zM3 3h1v1h-1zM6 3h1v1h-1zM9 3h1v1h-1zM10 3h1v1h-1zM3 4h1v1h-1zM7 4h1v1h-1zM8 4h1v1h-1zM9 4h1v1h-1zM4 5h1v1h-1zM8 5h1v1h-1zM5 6h1v1h-1zM8 6h1v1h-1zM5 7h1v1h-1zM9 7h1v1h-1zM4 8h1v1h-1zM5 8h1v1h-1zM6 8h1v1h-1zM10 8h1v1h-1zM3 9h1v1h-1zM4 9h1v1h-1zM7 9h1v1h-1zM10 9h1v1h-1zM2 10h1v1h-1zM3 10h1v1h-1zM8 10h1v1h-1zM11 10h1v1h-1zM1 11h1v1h-1zM2 11h1v1h-1zM8 11h1v1h-1zM12 11h1v1h-1zM0 12h1v1h-1zM1 12h1v1h-1zM9 12h1v1h-1zM10 12h1v1h-1zM11 12h1v1h-1zM12 12h1v1h-1zM13 12h1v1h-1z"/></svg>
+          <b>The influencer is dead. The Age of Experience is here.</b>
+          <span class="x_card_author">Dan Koe @thedankoe</span>
+          <p>"The secret of most creatives you love is that they keep a ruthless curation of notes, ideas, and sources of inspiration. A "swipe file," as marketers call it."</p>
+        </div>
+      </a>
+    </section>
+
+    <section id="get_it" aria-label="download">
+      <div class="get_it_grid">
+        <a class="get_it_card new_box" href="https://swipelist-site.vercel.app/download/swipelist.dmg" download>
+          <svg class="pixel_art" viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M1 1h10v7H1zM2 2v5h8V2zM4 9h4v1h2v1H2v-1h2z"/></svg>
+          <b>mac</b>
+          <span>beta v0.1</span>
+        </a>
+        <a class="get_it_card new_box" href="https://swipelist-site.vercel.app/download/swipelist.apk" download>
+          <svg class="pixel_art" viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M3 0h6v12H3zM4 1v9h4V1zM5 10h2v1H5z"/></svg>
+          <b>android</b>
+          <span>beta v0.1</span>
+        </a>
+        <!-- linux:start -->
+        <a class="get_it_card new_box" href="https://swipelist-site.vercel.app/download/swipelist.AppImage" download data-platform="linux">
+          <svg class="pixel_art" viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M0 1h12v10H0zM1 2v8h10V2zM2 3h1v1h1v1H3v1H2V5h1V4H2zM5 6h3v1H5z"/></svg>
+          <b>linux</b>
+          <span>beta v0.1</span>
+        </a>
+        <!-- linux:end -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="page_footer">
+    <span class="pixel_label">swipelist · early and rough</span>
+    <span class="pixel_label">your notes stay on your device · <a href="self-host.html">helper on your own terms</a></span>
+  </footer>
+</div>
+
+
+
+<script>
+  // point the main button at the visitor's own platform
+  (function () {
+    var btn = document.getElementById("primary_download");
+    var ua = navigator.userAgent || "";
+    var plat = (navigator.userAgentData && navigator.userAgentData.platform) || "";
+    var hasLinux = !!document.querySelector('[data-platform="linux"]');
+    var target = null;
+    if (/android/i.test(ua) || /android/i.test(plat)) target = ["https://swipelist-site.vercel.app/download/swipelist.apk", "download for android"];
+    else if (hasLinux && (/linux/i.test(plat) || /linux/i.test(ua))) target = ["https://swipelist-site.vercel.app/download/swipelist.AppImage", "download for linux"];
+    if (!target) return;
+    btn.href = target[0];
+    btn.querySelector("span").textContent = target[1];
+  })();
+</script>
+<script>
+  // spotlight follows the pointer over recessed cards; on touch, a short glow on tap
+  (function () {
+    var frame = 0, card = null, x = 0, y = 0;
+    document.addEventListener("pointermove", function (e) {
+      var c = e.target.closest && e.target.closest(".new_box");
+      if (!c || e.pointerType === "touch") return;
+      card = c; x = e.clientX; y = e.clientY;
+      if (frame) return;
+      frame = requestAnimationFrame(function () {
+        frame = 0;
+        var r = card.getBoundingClientRect();
+        card.style.setProperty("--mx", (x - r.left) + "px");
+        card.style.setProperty("--my", (y - r.top) + "px");
+      });
+    }, { passive: true });
+    document.addEventListener("pointerdown", function (e) {
+      var c = e.target.closest && e.target.closest(".new_box");
+      if (!c || e.pointerType !== "touch") return;
+      c.classList.add("lit");
+      setTimeout(function () { c.classList.remove("lit"); }, 600);
+    }, { passive: true });
+  })();
+</script>
+<script>
+  (function () {
+    const decoded_image_class_name = "is_decoded";
+
+    function reveal_image_once_fully_decoded(image_element_waiting_for_decode) {
+      const decode_finished_promise = image_element_waiting_for_decode.decode().catch(() => undefined);
+      decode_finished_promise.then(() => image_element_waiting_for_decode.classList.add(decoded_image_class_name));
+    }
+
+    function start_decode_when_image_has_loaded(image_element_waiting_for_load) {
+      if (image_element_waiting_for_load.complete) return reveal_image_once_fully_decoded(image_element_waiting_for_load);
+      image_element_waiting_for_load.addEventListener("load", () => reveal_image_once_fully_decoded(image_element_waiting_for_load), { once: true });
+    }
+
+    const images_revealed_after_decode = document.querySelectorAll("img.reveal_after_decode");
+    images_revealed_after_decode.forEach(start_decode_when_image_has_loaded);
+  })();
+</script>
+</body>
+</html>

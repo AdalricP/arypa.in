@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>swipelist</title>
+    <link rel="icon" type="image/png" href="./favicon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="./icon-192.png" />
+    <meta name="theme-color" content="#f3f2ee" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <script type="module" crossorigin src="./assets/index-Buacv0eX.js"></script>
+  </head>
+  <body>
+    <header data-tauri-drag-region>
+      <button id="open-settings" class="icon" title="settings" aria-label="settings"></button>
+    </header>
+
+    <!-- only this scrolls: the sidebar, header and buttons sit outside it and never move or bounce -->
+    <div id="scroller"><main id="board"></main></div>
+
+    <button id="menu" class="icon" aria-label="folders"></button>
+    <aside id="drawer">
+      <ul id="folder-list"></ul>
+      <button id="new-folder" aria-label="new folder"></button>
+      <div id="trash-row" role="button" aria-label="trash"><span class="bin-ico"></span><small></small></div>
+    </aside>
+    <button id="finger" hidden aria-label="add a suggestion"></button>
+    <div id="edge" hidden></div>
+
+
+    <div id="settings" class="veil" hidden>
+      <section class="sheet">
+        <div class="page" id="page-main">
+          <div class="sheet-head"><button class="icon" data-close aria-label="done"></button></div>
+
+          <h4>notes</h4>
+          <div class="seg"><button data-mode="auto" aria-label="auto"></button><button data-mode="suggest" aria-label="suggest"></button><button data-mode="manual" aria-label="manual"></button></div>
+          <small id="mode-name"></small>
+          <ul id="folders"></ul>
+          <button class="icon" data-add-folder aria-label="add a folder"></button>
+
+          <div class="line"><span>colour</span><div id="swatches"></div></div>
+          <div class="line"><span>cards</span><div id="card-swatches"></div></div>
+          <div class="line"><span>pins</span><div id="rope-swatches"></div></div>
+          <div class="line"><button id="helper-link" class="link-btn"><span>helper</span><i class="helper-dot" hidden></i></button><label class="switch"><input type="checkbox" id="s-helper" /><i></i></label></div>
+          <div class="line" data-flag="spotify_login"><button id="spotify-link" class="link-btn live"><span>spotify search</span></button><span id="spotify-mini" class="spotify-mini"></span></div>
+        </div>
+
+        <div class="page" id="page-spotify" hidden>
+          <div class="sheet-head split"><button class="icon" data-back aria-label="back"></button><button class="icon" data-close aria-label="done"></button></div>
+          <h4>spotify search</h4>
+          <div id="spotify-login"></div>
+        </div>
+
+        <div class="page" id="page-helper" hidden>
+          <div class="sheet-head split"><button class="icon" data-back aria-label="back"></button><button class="icon" data-close aria-label="done"></button></div>
+          <h4>helper</h4>
+          <div class="choice">
+            <button class="opt" data-plan="server" data-flag="paid_plan" disabled><b>swipelist</b><small>$9 / month · tba</small></button>
+            <button class="opt on" data-plan="own"><b>bring your own key</b><small>free with a local model</small></button>
+          </div>
+          <label>key <input id="s-key" type="password" placeholder="sk-..." autocomplete="off" /></label>
+          <label>url <input id="s-base" placeholder="https://api.deepseek.com" /></label>
+          <label>model <input id="s-model" placeholder="deepseek-chat" /></label>
+          <div id="helper-check" class="helper-check"></div>
+          <button class="guide-link" data-guide data-flag="self_host_guide">set it up yourself</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="focus" class="veil" hidden>
+      <section class="sheet focus">
+        <div class="sheet-head split"><button class="icon" data-openlink aria-label="open link"></button><button class="icon" data-close aria-label="done"></button></div>
+        <div id="focus-body"></div>
+      </section>
+    </div>
+
+    <div id="ask" class="veil" hidden>
+      <section class="sheet small">
+        <span class="mark">read your notes?</span>
+        <p>read only. nothing leaves your device.</p>
+        <div class="row"><button class="icon" data-yes aria-label="ok"></button><button class="icon" data-no aria-label="no"></button></div>
+      </section>
+    </div>
+  </body>
+</html>

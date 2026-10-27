@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>swipelist · on your own terms</title>
+<meta name="description" content="Run swipelist's helper on your own model or key, for free.">
+<meta name="theme-color" content="#f3f2ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d2a40" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+
+<div class="page_column">
+  <header class="top_bar">
+    <a class="top_bar_brand" href="index.html">
+      <img src="logo.png" alt="" width="28" height="28">
+      swipelist
+    </a>
+    <a class="top_bar_link" href="index.html#get_it">get it</a>
+  </header>
+</div>
+
+<main class="reading_column">
+  <h1 class="hero_title">on your own terms</h1>
+  <p class="hero_line">The helper is optional. Everything below is free, and none of it goes through anyone but you.</p>
+
+  <section class="reading_card">
+    <h2>a model on your own computer</h2>
+    <p>Free, offline, nothing leaves your machine.</p>
+    <ol>
+      <li>Install <a href="https://ollama.com">Ollama</a>.</li>
+      <li>Run <code>ollama pull llama3.2</code> in a terminal.</li>
+      <li>In swipelist, open settings and tap "helper".</li>
+      <li>Pick "bring your own key". Leave the key empty, set url to <code>http://localhost:11434/v1</code> and model to <code>llama3.2</code>.</li>
+    </ol>
+    <p>For search that understands meaning as well as words, also run <code>ollama pull nomic-embed-text</code>.</p>
+  </section>
+
+  <section class="reading_card">
+    <h2>your own key</h2>
+    <p>Anything that speaks the OpenAI chat API works. DeepSeek is cheap and is the default.</p>
+    <ol>
+      <li>Make a key at <a href="https://platform.deepseek.com">platform.deepseek.com</a>.</li>
+      <li>On the helper page, pick "bring your own key" and paste it. A tick means it works.</li>
+      <li>Keep url <code>https://api.deepseek.com</code> and model <code>deepseek-chat</code>, or use your provider's.</li>
+    </ol>
+    <p>The key stays on your device. Notes only go to the url you set, and only while the helper is on.</p>
+  </section>
+
+  <section class="reading_card">
+    <h2>your notes, your storage</h2>
+    <p>Your notes are plain files on your computer: every note is a folder with a <code>note.md</code>. Syncing between devices isn't built yet.</p>
+  </section>
+</main>
+
+<div class="page_column">
+  <footer class="page_footer">
+    <a class="pixel_label" href="index.html">← swipelist</a>
+    <span class="pixel_label">early and rough</span>
+  </footer>
+</div>
+
+</body>
+</html>
