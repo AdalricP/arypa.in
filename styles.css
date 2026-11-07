@@ -5,8 +5,9 @@ body { margin: 0; padding: 56px 24px 80px; }
 .site-shell { position: relative; z-index: 1; width: min(100%, 1060px); margin: 0 auto; display: grid; grid-template-columns: 180px minmax(0, 720px); gap: clamp(48px, 8vw, 100px); justify-content: center; align-items: start; }
 .sidebar { position: fixed; top: 50vh; left: max(24px, calc(50% - 530px)); width: 180px; transform: translateY(-50%); }
 .section-menu { display: flex; flex-direction: column; align-items: stretch; gap: 0; border-left: 1px solid #777; }
-.menu-button, .sub-menu-button { position: relative; appearance: none; border: 0; padding: .28rem 0 .28rem 1rem; background: none; color: #68758a; font: inherit; font-size: 1rem; line-height: 1.65; cursor: pointer; text-align: left; }
-.menu-button:hover, .sub-menu-button:hover { color: #222; text-decoration: underline; }
+.menu-button, .sub-menu-button, .menu-link { position: relative; appearance: none; border: 0; padding: .28rem 0 .28rem 1rem; background: none; color: #68758a; font: inherit; font-size: 1rem; line-height: 1.65; cursor: pointer; text-align: left; }
+.menu-button:hover, .sub-menu-button:hover, .menu-link:hover { color: #222; text-decoration: underline; }
+.menu-link { text-decoration: none; }
 .sidebar-link:hover { color: #8a0303; text-decoration: underline; }
 .menu-button.is-active, .sub-menu-button.is-active { color: #222; }
 .menu-button.is-active::before, .sub-menu-button.is-active::before { content: ""; position: absolute; top: 0; bottom: 0; left: -2px; width: 3px; background: #111; }
